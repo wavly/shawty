@@ -47,7 +47,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		// And if true then log the error and return
 		if err != sql.ErrNoRows {
 			http.Error(w, "Sorry, an unexpected error occur when querying from the database", http.StatusInternalServerError)
-      log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", hashUrl, err)
+			log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", hashUrl, err)
 			return
 		}
 
