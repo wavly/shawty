@@ -13,13 +13,13 @@ import (
 
 func ConnectDB() *sql.DB {
 	// Loading the environment variables
-  err := godotenv.Load(".env.local")
+	err := godotenv.Load(".env.local")
 	asserts.NoErr(err, "Failed to load environment variables")
 
-  tursoURL := os.Getenv("TURSO_DATABASE_URL")
-  tursoToken := os.Getenv("TURSO_AUTH_TOKEN")
+	tursoURL := os.Getenv("TURSO_DATABASE_URL")
+	tursoToken := os.Getenv("TURSO_AUTH_TOKEN")
 
-  db, err := sql.Open("libsql", fmt.Sprintf("%s?authToken=%s", tursoURL, tursoToken))
-  asserts.NoErr(err, "Failed to connect to Turso remote db")
-  return db
+	db, err := sql.Open("libsql", fmt.Sprintf("%s?authToken=%s", tursoURL, tursoToken))
+	asserts.NoErr(err, "Failed to connect to Turso remote db")
+	return db
 }

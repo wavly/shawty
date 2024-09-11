@@ -7,7 +7,7 @@ import "log"
 // Checks if an error is non-nil and logs both a custom message and the error details,
 // then terminates the program.
 func NoErr(err error, msg string) {
-  if err != nil {
-    log.Fatalln(msg, err)
-  }
+	if err != nil {
+		log.Fatalln(msg, err)
+	}
 }

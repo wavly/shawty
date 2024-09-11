@@ -14,30 +14,30 @@ import (
 const PORT string = "1234"
 
 func main() {
-  // Creating the ServerMux router
-  router := http.NewServeMux()
+	// Creating the ServerMux router
+	router := http.NewServeMux()
 
-  // Reading the URLS-SQL schema file
-  fileBytes, err := os.ReadFile("./schema/urls.sql")
-  asserts.NoErr(err, "Failed to read URLS-SQL schema file")
+	// Reading the URLS-SQL schema file
+	fileBytes, err := os.ReadFile("./schema/urls.sql")
+	asserts.NoErr(err, "Failed to read URLS-SQL schema file")
 
-  db := database.ConnectDB()
-  defer db.Close()
+	db := database.ConnectDB()
+	defer db.Close()
 
-  // Create the URLs table in the database
-  _, err = db.Exec(string(fileBytes))
-  asserts.NoErr(err, "Error creating the URLs table in the database")
+	// Create the URLs table in the database
+	_, err = db.Exec(string(fileBytes))
+	asserts.NoErr(err, "Error creating the URLs table in the database")
 
-  // Route for shortening the URL
-  router.HandleFunc("POST /", handlers.Main)
+	// Route for shortening the URL
+	router.HandleFunc("POST /", handlers.Main)
 
-  // Ping/Pong route
-  router.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
-    w.Write([]byte("pong\n"))
-  })
+	// Ping/Pong route
+	router.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("pong\n"))
+	})
 
-  fmt.Println("Listening on:", PORT)
-  if err := http.ListenAndServe("0.0.0.0:"+PORT, router); err != nil {
-    log.Fatalln("Failed to start the server:", err)
-  }
+	fmt.Println("Listening on:", PORT)
+	if err := http.ListenAndServe("0.0.0.0:"+PORT, router); err != nil {
+		log.Fatalln("Failed to start the server:", err)
+	}
 }
