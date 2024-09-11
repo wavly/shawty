@@ -1,12 +1,13 @@
 package main
 
 import (
-  "fmt"
-  "log"
-  "net/http"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
 
-  "github.com/joho/godotenv"
-  "github.com/wavly/shawty/asserts"
+	"github.com/wavly/shawty/asserts"
+	"github.com/wavly/shawty/database"
 )
 
 const PORT string = "1234"
@@ -15,12 +16,20 @@ func main() {
   // Creating the ServerMux router
   router := http.NewServeMux()
 
-  // Loading the environment variables
-  err := godotenv.Load()
-  asserts.NoErr(err, "Failed to load environment variables")
+  // Reading the URLS-SQL schema file
+  fileBytes, err := os.ReadFile("./schema/urls.sql")
+  asserts.NoErr(err, "Failed to read URLS-SQL schema file")
+
+  db := database.ConnectDB()
+  defer db.Close()
+
+  // Create the URLs table in the database
+  _, err = db.Exec(string(fileBytes))
+  asserts.NoErr(err, "Error creating the URLs table in the database")
+
 
   // Ping/Pong route
-  router.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+  router.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte("pong\n"))
   })
 
