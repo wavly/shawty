@@ -15,6 +15,8 @@ func main() {
     w.Write([]byte("pong\n"))
   })
 
+  router.HandleFunc("/shawty/", redirectionHandler)
+
   fmt.Println("Listening on:", PORT)
   if err := http.ListenAndServe("0.0.0.0:"+PORT, router); err != nil {
     log.Fatalln("Failed to start the server:", err)
