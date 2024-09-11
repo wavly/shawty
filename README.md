@@ -27,7 +27,11 @@
    ```
    cd shawty
    ```
-3. **Run the application**:
+3. **Set ENV Variables**:
+   ```
+   vim .env
+   ```
+4. **Run the application**:
    ```
    go run .
    ```
@@ -40,6 +44,7 @@
 ## Contributing
 
 We welcome contributions to this project! For guidelines on how to contribute, please refer to the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file.
+
 
 ## Acknowledgements and Appreciation
 
