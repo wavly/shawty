@@ -1,42 +1,35 @@
-# [Shwawty]
+# Shawty
 
-*Short link ting*
-
----
+> *Short link thing*
 
 ## About The Project
 
-- Briefly explain what this project does.
-- Highlight unique features or what makes this project stand out.
-- Provide context or background if necessary.
+- Converts long URLs into short, easy-to-share links.
+- Supports custom slugs for personalized links.
 
 ## Demo/Live Link
 
-- [Link to Demo or Live Version](#)
+- [Not available at the moment](about:blank)
 
 ## Getting Started
 
 ### Prerequisites
 
-- List any prerequisites, libraries, or tools needed to run this project.
+- Go - [Get here](https://go.dev/doc/install)
 
 ### Installation and Setup
 
 1. **Clone the repository**:
    ```
-   git clone [repository link]
+   git clone https://github.com/wavly/shawty.git
    ```
 2. **Navigate to the project directory**:
    ```
-   cd [project name]
+   cd shawty
    ```
-3. **Install dependencies**:
+3. **Run the application**:
    ```
-   [Commands to install dependencies]
-   ```
-4. **Run the application**:
-   ```
-   [Commands to start the app]
+   go run .
    ```
 
 ## Project Structure
@@ -55,5 +48,4 @@ We welcome contributions to this project! For guidelines on how to contribute, p
 
 ## Additional Information
 
-- [Project Name] is [License](LICENSE) under MIT.
-- Any other information or sections relevant to the project can be added here.
+- Shawty is [License](LICENSE) under MIT.
