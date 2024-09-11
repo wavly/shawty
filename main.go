@@ -8,6 +8,7 @@ import (
 
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/database"
+	"github.com/wavly/shawty/handlers"
 )
 
 const PORT string = "1234"
@@ -27,6 +28,8 @@ func main() {
   _, err = db.Exec(string(fileBytes))
   asserts.NoErr(err, "Error creating the URLs table in the database")
 
+  // Route for shortening the URL
+  router.HandleFunc("POST /", handlers.Main)
 
   // Ping/Pong route
   router.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
