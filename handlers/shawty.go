@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/wavly/shawty/asserts"
@@ -24,11 +25,15 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 
 	longUrl := r.FormValue("url")
 
-	// Check if longUrl contains valid schema "://" and if not then added it manually
+	// Check if longUrl contains "://" and add "https://" if missing
 	if !strings.Contains(longUrl, "://") {
 		longUrl = "https://" + longUrl
-	} else if !strings.Contains(longUrl, "http") { // Check if longUrl schema is http(s)
-		w.Write([]byte("Only HTTP or HTTPS schema is allowed"))
+	}
+
+	// Parse the URL to validate it and check its scheme
+	parsedUrl, err := url.Parse(longUrl)
+	if err != nil || parsedUrl.Scheme != "https" {
+		w.Write([]byte("Invalid URL. Only HTTPS schema is allowed"))
 		return
 	}
 
