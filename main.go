@@ -37,7 +37,7 @@ func main() {
 	router.HandleFunc("POST /", handlers.Main)
 
 	// Route to handle redirection
-	router.HandleFunc("GET /u/{url}", handlers.Redirection)
+	router.HandleFunc("GET /u/{code}", handlers.Redirection)
 
 	fmt.Println("Listening on:", PORT)
 	if err := http.ListenAndServe("0.0.0.0:"+PORT, router); err != nil {
