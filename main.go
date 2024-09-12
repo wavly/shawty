@@ -36,6 +36,9 @@ func main() {
 	// Route for shortening the URL
 	router.HandleFunc("POST /", handlers.Main)
 
+	// Route for index page
+	router.Handle("GET /", http.FileServer(http.Dir("./static/")))
+
 	// Route to handle redirection
 	router.HandleFunc("GET /u/{code}", handlers.Redirection)
 
