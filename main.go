@@ -28,16 +28,16 @@ func main() {
 	_, err = db.Exec(string(fileBytes))
 	asserts.NoErr(err, "Error creating the URLs table in the database")
 
-	// Route for shortening the URL
-	router.HandleFunc("POST /", handlers.Main)
-
 	// Ping/Pong route
 	router.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong\n"))
 	})
 
+	// Route for shortening the URL
+	router.HandleFunc("POST /", handlers.Main)
+
 	// Route to handle redirection
-	router.HandleFunc("GET /shawty/", handlers.Redirection)
+	router.HandleFunc("GET /u/{url}", handlers.Redirection)
 
 	fmt.Println("Listening on:", PORT)
 	if err := http.ListenAndServe("0.0.0.0:"+PORT, router); err != nil {
