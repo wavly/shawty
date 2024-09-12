@@ -45,7 +45,7 @@ func main() {
 	router.HandleFunc("GET /stat/{code}", handlers.Stats)
 
 	// Route to handle redirection
-	router.HandleFunc("GET /u/{code}", handlers.Redirection)
+	router.HandleFunc("GET /s/{code}", handlers.Redirection)
 
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
