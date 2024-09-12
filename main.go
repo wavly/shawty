@@ -42,6 +42,9 @@ func main() {
 	// Route to handle redirection
 	router.HandleFunc("GET /u/{code}", handlers.Redirection)
 
+	// API route for shortening the URL
+	router.HandleFunc("POST /shawty", handlers.Shawty)
+
 	fmt.Println("Listening on:", PORT)
 	if err := http.ListenAndServe("0.0.0.0:"+PORT, router); err != nil {
 		log.Fatalln("Failed to start the server:", err)
