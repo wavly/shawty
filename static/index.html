@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="title" content="Shawty - Tool for shortening long URLs">
+  <meta name="description" content="Shawty is a tool for shortening long URLs making it easy to share them">
+  <script src="https://unpkg.com/htmx.org@2.0.2"
+    integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
+    crossorigin="anonymous"></script>
+  <title>Shawty</title>
+  <link rel="stylesheet" href="dist.css">
+</head>
+
+<body class="bg-[#090909] text-[#ada9a9] mt-10">
+  <h1 class="text-5xl text-center text-white mb-2 font-bold">Shawty</h1>
+  <p class="text-center text-lg mb-10">Shawty is a free and <a class="underline"
+      href="https://github.com/wavly/shawty">open-source</a> tool to shortening long URLs</p>
+  <div class="py-3 px-7 relative rounded-md bg-[#1f1f1f] max-w-[45rem] mx-auto">
+    <h2 class="text-3xl font-bold text-center">Paste the URL to be shortened</h2>
+    <form class="flex justify-center my-6" hx-post="/shawty" hx-target="#return">
+      <input name="url" type="text" placeholder="Enter the Link here"
+        class="px-4 py-2 rounded-l-lg bg-slate-700 text-slate-400 placeholder-slate-400 w-96" required>
+      <button class="px-4 py-2 text-lg font-bold bg-black rounded-r-lg text-slate-300 active:bg-blue-800">
+        Shorten URL
+      </button>
+      <img class="htmx-indicator absolute right-[2em] w-10" src="https://i.gifer.com/XVo6.gif" alt="spinner">
+    </form>
+    <span id="return" class="flex flex-col items-center gap-2 text-lg font-mono my-10 text-center"></span>
+  </div>
+</body>
+
+</html>
