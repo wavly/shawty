@@ -17,6 +17,8 @@ func main() {
 	// Creating the ServerMux router
 	router := http.NewServeMux()
 
+	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	// Reading the URLS-SQL schema file
 	fileBytes, err := os.ReadFile("./schema/urls.sql")
 	asserts.NoErr(err, "Failed to read URLS-SQL schema file")
