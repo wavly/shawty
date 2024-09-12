@@ -41,6 +41,9 @@ func main() {
 	// Route for index page
 	router.Handle("GET /", http.FileServer(http.Dir("./static/")))
 
+	// Route for stats page
+	router.HandleFunc("GET /stat/{code}", handlers.Stats)
+
 	// Route to handle redirection
 	router.HandleFunc("GET /u/{code}", handlers.Redirection)
 
