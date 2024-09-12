@@ -48,4 +48,4 @@ We welcome contributions to this project! For guidelines on how to contribute, p
 
 ## LICENSE
 
-- Shawty is [License](LICENSE) under MIT.
+- Shawty is [License](LICENSE) under MPL-2.0.
