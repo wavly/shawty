@@ -1,56 +1,51 @@
 # Shawty
 
-> *Short link thing*
+**Shawty** is a URL shortener built using [Golang](https://go.dev) and
+[Turso](https://turso.tech). It provides a simple interface for shortening
+URLs, tracking their usage, and offering statistics about shortened URLs.
 
-## About The Project
+## Features
+- **URL Click Statistics**:
+Keep track of how many times each shortened URL is accessed.
 
-- Converts long URLs into short, easy-to-share links.
-- Supports custom slugs for personalized links.
-
-## Demo/Live Link
-
-- [Not available at the moment](about:blank)
+- **Input Validation**:
+Checks if the URL is a valid URL schema. It only allows `http://` and
+`https://` URLs. And also checking if the URL contains a
+[TLD](https://en.wikipedia.org/wiki/Top-level_domain).
 
 ## Getting Started
 
 ### Prerequisites
 
-- Go - [Get here](https://go.dev/doc/install)
+- Go (version 1.20 or higher) - [Download](https://go.dev/doc/install)
+- Turso Account - [Website](https://turso.tech)
 
 ### Installation and Setup
 
 1. **Clone the repository**:
    ```
    git clone https://github.com/wavly/shawty.git
-   ```
-2. **Navigate to the project directory**:
-   ```
    cd shawty
    ```
-3. **Set ENV Variables**:
+2. **Set ENV Variables**:
+   Get the database URL and Token: [Turso Docs](https://docs.turso.tech/sdk/go/quickstart)
+
    ```
-   vim .env
+   cp .env .env.local
    ```
-4. **Run the application**:
+3. **Install the dependencies**:
+   ```
+   go mod tidy
+   ```
+4. **Run the server**:
    ```
    go run .
    ```
-
-## Project Structure
-
-- Briefly describe the architecture or main components of the project.
-- Link to additional documentation or wikis if available.
 
 ## Contributing
 
 We welcome contributions to this project! For guidelines on how to contribute, please refer to the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file.
 
-
-## Acknowledgements and Appreciation
-
-- Express gratitude to contributors, mentors, or anyone who helped with the project.
-- You can also list any libraries or tools you used.
-
-## Additional Information
+## LICENSE
 
 - Shawty is [License](LICENSE) under MIT.
