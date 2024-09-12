@@ -60,10 +60,10 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(fmt.Sprintf("Location: /s/%s", hashUrl)))
+		w.Write([]byte(fmt.Sprintf("Location: /u/%s", hashUrl)))
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("Location: /s/%s", hashUrl)))
+	w.Write([]byte(fmt.Sprintf("Location: /u/%s", hashUrl)))
 }
