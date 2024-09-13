@@ -11,13 +11,18 @@
     crossorigin="anonymous"></script>
   <title>Shawty</title>
   <link rel="stylesheet" href="dist.css">
+  <style>
+    a {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 
-<body class="bg-[#090909] text-[#ada9a9] mt-10">
+<body class="bg-[#090909] w-[55rem] mx-auto text-[#ada9a9] mt-10">
   <h1 class="text-5xl text-center text-white mb-2 font-bold">Shawty</h1>
   <p class="text-center text-lg mb-10">Shawty is a free and <a class="underline"
       href="https://github.com/wavly/shawty">open-source</a> tool to shortening long URLs</p>
-  <div class="py-3 px-7 relative rounded-md bg-[#1f1f1f] max-w-[45rem] mx-auto">
+  <div class="py-3 px-7 my-4 relative rounded-md bg-[#1f1f1f] mx-auto">
     <h2 class="text-3xl font-bold text-center">Paste the URL to be shortened</h2>
     <form class="flex justify-center my-6" hx-post="/shawty" hx-target="#return">
       <input name="url" type="text" placeholder="Enter the Link here"
@@ -27,8 +32,25 @@
       </button>
       <img class="htmx-indicator absolute right-[2em] w-10" src="https://i.gifer.com/XVo6.gif" alt="spinner">
     </form>
-    <span id="return" class="flex flex-col items-center gap-2 text-lg font-mono my-10 text-center"></span>
+    <span id="return"></span>
   </div>
+
+  <h2 class="font-bold mb-2 mt-10 text-3xl">Simple and fast URL shortener!</h2>
+  <p class="text-lg">
+    Shawty allows to shorten long links from <a href="https://www.instagram.com">Instagram</a>,
+    <a href="https://facebook.com">Facebook</a>, <a href="https://youtube.com">YouTube</a>,
+    <a href="https://x.com">Twitter</a>, <a href="https://linkedin.com">Linked In</a>,
+    <a href="https://whatsapp.com">WhatsApp</a>, <a href="https://tiktok.com">TikTok</a>,
+    blogs and sites. Just paste the long URL and click the Shorten URL button. Copy the generated shortened URL and
+    share it on sites, chat and emails. After shortening the URL.
+  </p>
+
+  <h2 class="font-bold mb-2 mt-10 text-3xl">Shorten, share and track</h2>
+  <p class="text-lg mb-5">
+    Your shortened URLs can be used in publications, documents, advertisements, blogs, forums, instant messages, and other
+    locations. Track statistics for your business and projects by monitoring the number of hits from your URL with our click
+    counter.
+  </p>
 </body>
 
 </html>
