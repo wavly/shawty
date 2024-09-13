@@ -75,7 +75,7 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		data := ShortLink{
-			ShortUrl:    code,
+			ShortUrl:    hashUrl,
 			OriginalUrl: longUrl,
 		}
 		asserts.NoErr(templ.Execute(w, data), "Failed to execute template short-link.html")
