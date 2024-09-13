@@ -55,10 +55,12 @@ Checks if the URL is a valid URL schema. It only allows `http://` and
 
 Use the `Makefile` to run/build the web server.
 
-### Requirements
+#### Requirements
 
 - [Watchexec](https://github.com/watchexec/watchexec) - A file watcher for restarting and running the web server when the source files is updated
 - [Bun](https://bun.sh) - Bun package manager (or `npm`,`pmpm`) for installing and watching static content for tailwind classes
+
+#### Commands
 
 - Run `make server` to start the server in watch mode
 - Run `make tailwind` to watch for tailwind classes
