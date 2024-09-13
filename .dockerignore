@@ -1,0 +1,8 @@
+node_modules
+.git
+.env
+.github
+
+bun.lockb
+package.json
+tailwind.config.js
