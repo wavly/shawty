@@ -64,6 +64,7 @@ Use the `Makefile` to run/build the web server.
 
 - Run `make server` to start the server in watch mode
 - Run `make tailwind` to watch for tailwind classes
+- Run `make tailmini` to minify the generated tailwind CSS file
 
 ## Contributing
 
