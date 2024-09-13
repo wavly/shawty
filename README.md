@@ -14,8 +14,8 @@ package and [Tailwind](https://tailwindcss.com).
 Keep track of how many times each shortened URL is accessed.
 
 - **Input Validation**:
-Checks if the URL is a valid URL schema. It only allows `http://` and
-`https://` URLs. And also checking if the URL contains a
+Checks if the URL is a valid URL schema. It only allows `https://` URLs. And
+also checks if the URL contains a valid
 [TLD](https://en.wikipedia.org/wiki/Top-level_domain).
 
 ## Getting Started
