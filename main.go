@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -52,7 +51,5 @@ func main() {
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
 	fmt.Println("Listening on:", PORT)
-	if err := http.ListenAndServe("0.0.0.0:"+PORT, router); err != nil {
-		log.Fatalln("Failed to start the server:", err)
-	}
+	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+PORT, router), "Failed to start the server:")
 }
