@@ -1,5 +1,6 @@
+<div class="flex flex-col items-center gap-2 text-lg font-mono mb-2 mt-10 text-center">
+  <a class="underline text-white" href="/s/{{ .ShortUrl }}">shawty/s/{{ .ShortUrl }}</a>
+  <p>Long URL: <a class="underline" href="{{ .OriginalUrl }}">{{ .OriginalUrl }}</a></p>
 
-<a class="underline text-white" href="/s/{{ .ShortUrl }}">shawty/s/{{ .ShortUrl }}</a>
-<p>Long URL: <a class="underline" href="{{ .OriginalUrl }}">{{ .OriginalUrl }}</a></p>
-
-<a class="my-3 hover:underline w-fit p-3 rounded-md bg-zinc-700" href="/stat/{{ .ShortUrl }}">Total clicks of your short URL</a>
+  <a class="my-3 hover:underline w-fit p-3 rounded-md bg-zinc-700" href="/stat/{{ .ShortUrl }}">Total clicks of your short URL</a>
+</div>
