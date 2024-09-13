@@ -7,7 +7,7 @@ statistics about shortened URLs.
 
 ## Features
 - **Web UI with Golang's** `html/template`:
-A minimalistic web interface built using [Golang](https://en.wikipedia.org/wiki/Go_(programming_language))'s standard `html/template`
+A minimalistic web interface built using Go's standard `html/template`
 package and [Tailwind](https://tailwindcss.com).
 
 - **URL Click Statistics**:
@@ -50,7 +50,6 @@ also checks if the URL contains a valid
    ```bash
    curl -i http://localhost:1234/
    ```
-(*These instructions were made for unix/linux based systems, we cannot guarentee these commands will work for other operating systems*)[https://en.wikipedia.org/wiki/Linux_kernel]
 
 ### Development
 
@@ -58,7 +57,7 @@ Use the `Makefile` to run/build the web server.
 
 #### Requirements
 
-- [Watchexec](https://github.com/watchexec/watchexec) - A file watcher for restarting and running the web server when the source files are updated (Nodemon may work for other people)[https://www.npmjs.com/package/nodemon]
+- [Watchexec](https://github.com/watchexec/watchexec) - A file watcher for restarting and running the web server when the source files are updated
 - [Bun](https://bun.sh) - Bun package manager (or `npm`,`pmpm`) for installing and watching static content for tailwind classes
 
 #### Commands
