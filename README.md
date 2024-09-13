@@ -46,7 +46,7 @@ also checks if the URL contains a valid
    ```bash
    go run .
    ```
-5. **Access the web interface on port: `1234`:
+5. **Access the web interface on port**: `1234`:
    ```bash
    curl -i http://localhost:1234/
    ```
