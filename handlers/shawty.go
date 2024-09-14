@@ -30,16 +30,21 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		longUrl = "https://" + longUrl
 	}
 
+	errorTempl := template.Must(template.ParseFiles("./partial-html/short-link-error.html"))
+
 	// Parse the URL to validate it and check its scheme
 	parsedUrl, err := url.Parse(longUrl)
 	if err != nil || parsedUrl.Scheme != "https" {
-		w.Write([]byte("Invalid URL. Only HTTPS schema is allowed"))
+		asserts.NoErr(errorTempl.Execute(w, "Invalid URL. Only HTTPS schema is allowed"), "Failed to execute template short-link-error.html")
 		return
 	}
 
-	// Check if URL is valid by checking if it contains `.`
+	// Check if URL contains a TLD (Top-Level Domain)
 	if !strings.Contains(longUrl, ".") {
-		w.Write([]byte("Enter a valid URL"))
+		asserts.NoErr(errorTempl.Execute(w, "The URL doesn't contain TLD (Top-Level Domain)"), "Failed to execute template short-link-error.html")
+		return
+	} else if split := strings.SplitN(longUrl, ".", 2); split[1] == "" {
+		asserts.NoErr(errorTempl.Execute(w, "The URL doesn't contain TLD (Top-Level Domain)"), "Failed to execute template short-link-error.html")
 		return
 	}
 
