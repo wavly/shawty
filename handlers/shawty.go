@@ -48,6 +48,12 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check the lenght of the URL
+	if len(longUrl) > 1000 {
+		asserts.NoErr(errorTempl.Execute(w, "The URL is too long, Max URL lenght is 1000 characters"), "Failed to execute template short-link-error.html")
+		return
+	}
+
 	hasher := sha256.New()
 	hasher.Write([]byte(longUrl))
 	checksum := hasher.Sum(nil)
