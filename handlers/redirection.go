@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/database"
 )
 
@@ -18,40 +20,60 @@ func Redirection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// MemcacheD Client
+	mcClient := memcache.New("0.0.0.0:11211")
+	asserts.NoErr(mcClient.Ping(), "Failed to ping MemcacheD")
+
 	db := database.ConnectDB()
 	defer db.Close()
 
-	// Get the url for the slug if exist
-	row := db.QueryRow("select original_url from urls where code = ?", code)
 	var originalUrl string
-	if err := row.Scan(&originalUrl); err != nil {
-		if err != sql.ErrNoRows {
-			http.Error(w, "Sorry, an unexpected error occur when querying the database", http.StatusInternalServerError)
-			log.Println("Failed to retrive original_url from the database:", err)
+	cache, err := mcClient.Get(code)
+	if err != nil {
+		if err != memcache.ErrCacheMiss {
+			log.Println("Memcache error:", err)
+		}
+
+		row := db.QueryRow("select original_url from urls where code = ?", code)
+		if err := row.Scan(&originalUrl); err != nil {
+			if err != sql.ErrNoRows {
+				http.Error(w, "Sorry, an unexpected error occur when querying the database", http.StatusInternalServerError)
+				log.Println("Failed to retrive original_url from the database:", err)
+				return
+			}
+
+			http.Redirect(w, r, "/", http.StatusBadRequest)
 			return
 		}
 
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("404 not found, try again"))
-		return
-	}
+		log.Println("Cache Miss:", originalUrl)
+		err = mcClient.Set(&memcache.Item{Key: code, Value: []byte(originalUrl)})
+		if err != nil {
+			log.Println("Memcache error when setting the key:", err)
+		}
+	} else if cache != nil && cache.Value != nil { // Check if original URL is in the cache
+		cacheOriginalUrl := string(cache.Value)
+		log.Println("Cashe Hit", cacheOriginalUrl)
 
-	// Update the accessed_count
-	_, err := db.Exec("update urls set accessed_count = accessed_count + 1 where code = ?", code)
-	if err != nil {
-		http.Error(w, "Sorry, an unexpected error occur when updating the access count from the database", http.StatusInternalServerError)
-		log.Println("Failed to update the accessed_count from the database:", err)
-		return
-	}
+		// Redirect to original URL
+		http.Redirect(w, r, cacheOriginalUrl, http.StatusFound)
 
-	// Update the last_accessed
-	_, err = db.Exec("update urls set last_accessed = ?", time.Now().UTC())
-	if err != nil {
-		http.Error(w, "Sorry, an unexpected error occur when updating the last_accessed count from the database", http.StatusInternalServerError)
-		log.Println("Failed to update the last_accessed from the database:", err)
+		// Update the accessed_count and last_accessed in one query
+		_, err = db.Exec("update urls set accessed_count = accessed_count + 1, last_accessed = ? where code = ?", time.Now().UTC(), code)
+		if err != nil {
+			log.Println("Failed to update accessed_count and last_accessed:", err)
+			return
+		}
 		return
 	}
 
 	// Redirect to original URL
 	http.Redirect(w, r, originalUrl, http.StatusFound)
+
+	// Update the accessed_count and last_accessed in one query
+	_, err = db.Exec("update urls set accessed_count = accessed_count + 1, last_accessed = ? where code = ?", time.Now().UTC(), code)
+	if err != nil {
+		log.Println("Failed to update accessed_count and last_accessed:", err)
+		return
+	}
 }
