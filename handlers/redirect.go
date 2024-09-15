@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/database"
 )
 
@@ -22,7 +21,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 
 	// MemcacheD Client
 	mcClient := memcache.New("0.0.0.0:11211")
-	asserts.NoErr(mcClient.Ping(), "Failed to ping MemcacheD")
 
 	db := database.ConnectDB()
 	defer db.Close()
