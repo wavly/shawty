@@ -13,6 +13,11 @@ func Redirection(w http.ResponseWriter, r *http.Request) {
 	// Get the URL-Path slug "url"
 	code := r.PathValue("code")
 
+	if len(code) > 8 {
+		http.Redirect(w, r, "/", http.StatusBadRequest)
+		return
+	}
+
 	db := database.ConnectDB()
 	defer db.Close()
 
