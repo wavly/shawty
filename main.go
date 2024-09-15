@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/database"
 	"github.com/wavly/shawty/handlers"
@@ -15,6 +16,10 @@ const PORT string = "1234"
 func main() {
 	// Creating the ServerMux router
 	router := http.NewServeMux()
+
+	// Check if memcache is up
+	mcClient := memcache.New("0.0.0.0:11211")
+	asserts.NoErr(mcClient.Ping(), "Failed to ping MemcacheD")
 
 	// Serving static files
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
