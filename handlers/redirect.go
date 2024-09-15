@@ -11,7 +11,7 @@ import (
 	"github.com/wavly/shawty/database"
 )
 
-func Redirection(w http.ResponseWriter, r *http.Request) {
+func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Get the URL-Path slug "url"
 	code := r.PathValue("code")
 
