@@ -7,7 +7,7 @@ import (
 
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/database"
+	"github.com/wavly/shawty/utils"
 	"github.com/wavly/shawty/handlers"
 )
 
@@ -28,7 +28,7 @@ func main() {
 	fileBytes, err := os.ReadFile("./schema/urls.sql")
 	asserts.NoErr(err, "Failed to read URLS-SQL schema file")
 
-	db := database.ConnectDB()
+	db := utils.ConnectDB()
 	defer db.Close()
 
 	// Create the URLs table in the database

@@ -29,7 +29,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	templ := template.Must(template.ParseFiles("./templs/stat.html"))
-	db := database.ConnectDB()
+	db := utils.ConnectDB()
 	defer db.Close()
 	queries := sqlc.New(db)
 
@@ -54,6 +54,12 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 			ShortUrl:    inputCode,
 			OriginalUrl: shortLinkInfo.OriginalUrl,
 		},
+	}
+
+	// Checking if the last accessed timestamp is not null
+	// And if true: set the LastAccessed value to "None"
+	if !shortLinkInfo.LastAccessed.Valid {
+		data.LastAccessed = "None"
 	}
 
 	asserts.NoErr(templ.Execute(w, data), "Failed to execute template stat.html")

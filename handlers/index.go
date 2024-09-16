@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
 	"github.com/wavly/shawty/database"
 	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
