@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/wavly/shawty/database"
 	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
@@ -59,7 +58,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db := database.ConnectDB()
+	db := utils.ConnectDB()
 	defer db.Close()
 	queries := sqlc.New(db)
 

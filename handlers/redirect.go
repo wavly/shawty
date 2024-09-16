@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/wavly/shawty/database"
 	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
@@ -25,7 +24,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	mcClient := memcache.New("0.0.0.0:11211")
 
 	// Open a connection to the database
-	db := database.ConnectDB()
+	db := utils.ConnectDB()
 	defer db.Close()
 	queries := sqlc.New(db)
 
