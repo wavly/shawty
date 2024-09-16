@@ -31,7 +31,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templ := template.Must(template.ParseFiles("./static/stat.html"))
+	templ := template.Must(template.ParseFiles("./templs/stat.html"))
 	db := database.ConnectDB()
 	defer db.Close()
 
