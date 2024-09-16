@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/wavly/shawty/database"
+	"github.com/wavly/shawty/utils"
 )
 
 func Main(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +47,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		// Check if err doesn't equal to `sql.ErrNoRows`
 		// And if true then log the error and return
 		if err != sql.ErrNoRows {
-			http.Error(w, "Sorry, an unexpected error occur when querying from the database", http.StatusInternalServerError)
+			utils.ServerErrTempl(w, "An unexpected error occur when querying from the database")
 			log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", hashUrl, err)
 			return
 		}
@@ -54,7 +55,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		// Insert the URL in the database if doesn't exists
 		row = db.QueryRow("insert into urls (original_url, code) values (?, ?)", inputUrl, hashUrl)
 		if err := row.Err(); err != nil {
-			http.Error(w, "Sorry, an unexpected error occur when saving the URL", http.StatusInternalServerError)
+			utils.ServerErrTempl(w, "An unexpected error occur when saving the URL to the database")
 			log.Println("Failed to store URL in the database", err)
 			return
 		}
