@@ -13,6 +13,10 @@ package and [Tailwind](https://tailwindcss.com).
 - **URL Click Statistics**:
 Keep track of how many times each shortened URL is accessed.
 
+- **Caching**: Using [Memcached](http://memcached.org/) for faster redirections
+and fewer database calls, by caching the results of redirecting requests to the
+original URL.
+
 - **Input Validation**:
 Checks if the URL is a valid URL schema. It only allows `https://` URLs. And
 also checks if the URL contains a valid
@@ -23,6 +27,7 @@ also checks if the URL contains a valid
 ### Prerequisites
 
 - Go (version 1.20 or higher) - [Download](https://go.dev/doc/install)
+- Memcached - [Download](http://memcached.org/)
 - Turso Account - [Website](https://turso.tech)
 
 ### Installation and Setup
@@ -41,6 +46,10 @@ also checks if the URL contains a valid
 3. **Install the dependencies**:
    ```bash
    go mod tidy
+   ```
+4. **Start the `Memcached` listener**:
+   ```bash
+   memcached # default port is: 11211
    ```
 4. **Run the server**:
    ```bash
@@ -62,13 +71,13 @@ Use the `Makefile` to run/build the web server.
 
 #### Commands
 
-- Run `make server` to start the server in watch mode
-- Run `make tailwind` to watch for tailwind classes
-- Run `make tailmini` to minify the generated tailwind CSS file
+- `make server` to start the server in watch mode
+- `make tailwind` to watch for tailwind classes
+- `make tailmini` to minify the generated tailwind CSS file
 
 ## Contributing
 
-We welcome any contributions to this project! For guidelines on how to contribute, please refer to the [CONTRIBUTING.md](.github/CONTRIBUTING.md) file.
+We welcome any contributions to this project! For major changes, please open an issue first to discuss what you would like to change.
 
 ## LICENSE
 
