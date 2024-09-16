@@ -1,9 +1,0 @@
-version: "2"
-sql:
-  - engine: "sqlite"
-    queries: "queries"
-    schema: "schema"
-    gen:
-      go:
-        package: "sqlcDB"
-        out: "sqlcGen"
