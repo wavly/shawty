@@ -10,6 +10,33 @@ import (
 	"database/sql"
 )
 
+const createShortLink = `-- name: CreateShortLink :one
+INSERT INTO urls (
+  original_url,
+  code
+) VALUES ( ?, ? )
+RETURNING id, original_url, code, created_at, accessed_count, last_accessed
+`
+
+type CreateShortLinkParams struct {
+	OriginalUrl string
+	Code        string
+}
+
+func (q *Queries) CreateShortLink(ctx context.Context, arg CreateShortLinkParams) (Url, error) {
+	row := q.db.QueryRowContext(ctx, createShortLink, arg.OriginalUrl, arg.Code)
+	var i Url
+	err := row.Scan(
+		&i.ID,
+		&i.OriginalUrl,
+		&i.Code,
+		&i.CreatedAt,
+		&i.AccessedCount,
+		&i.LastAccessed,
+	)
+	return i, err
+}
+
 const getOriginalUrl = `-- name: GetOriginalUrl :one
 SELECT original_url FROM urls where code = ?
 `
