@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/wavly/shawty/database"
+	"github.com/wavly/shawty/utils"
 )
 
 func Main(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +24,13 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	// Check the lenght of the customCode
 	if len(customCode) > 8 {
 		w.Write([]byte("Max lenght of the custom code is 8"))
+		return
+	}
+
+	// Only allow characters [a-z]/[A-Z] in customCode
+	if !utils.IsAcsii(customCode) {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Only alphabetic characters are allowed in the custom code"))
 		return
 	}
 
