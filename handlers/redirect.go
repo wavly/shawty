@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
-	sqlc "github.com/wavly/shawty/sqlc_db"
+	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
 )
 
@@ -26,7 +26,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Open a connection to the database
 	db := utils.ConnectDB()
 	defer db.Close()
-	queries := sqlc.New(db)
+	queries := database.New(db)
 
 	var originalUrl string
 	cache, err := mcClient.Get(code)
@@ -57,7 +57,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, cacheOriginalUrl, http.StatusFound)
 
 		// Update the accessed_count and last_accessed in one query
-		err = queries.UpdateAccessedAndLastCount(r.Context(), sqlc.UpdateAccessedAndLastCountParams{
+		err = queries.UpdateAccessedAndLastCount(r.Context(), database.UpdateAccessedAndLastCountParams{
 			Code:         code,
 			LastAccessed: sql.NullTime{Time: time.Now().UTC(), Valid: true},
 		})
@@ -72,7 +72,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, originalUrl, http.StatusFound)
 
 	// Update the accessed_count and last_accessed in one query
-	err = queries.UpdateAccessedAndLastCount(r.Context(), sqlc.UpdateAccessedAndLastCountParams{
+	err = queries.UpdateAccessedAndLastCount(r.Context(), database.UpdateAccessedAndLastCountParams{
 		Code:         code,
 		LastAccessed: sql.NullTime{Time: time.Now().UTC(), Valid: true},
 	})

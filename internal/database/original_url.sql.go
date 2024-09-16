@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: original_url.sql
 
-package sqlc_db
+package database
 
 import (
 	"context"
