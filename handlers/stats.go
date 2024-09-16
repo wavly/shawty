@@ -8,7 +8,8 @@ import (
 
 	"github.com/mergestat/timediff"
 	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/internal/database"
+	"github.com/wavly/shawty/database"
+	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
 
@@ -30,7 +31,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	templ := template.Must(template.ParseFiles("./templs/stat.html"))
 	db := utils.ConnectDB()
 	defer db.Close()
-	queries := database.New(db)
+	queries := sqlc.New(db)
 
 	shortLinkInfo, err := queries.GetShortCodeInfo(r.Context(), inputCode)
 	if err != nil {

@@ -11,7 +11,8 @@ import (
 	"strings"
 
 	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/internal/database"
+	"github.com/wavly/shawty/database"
+	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
 
@@ -56,9 +57,9 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	hasher.Write([]byte(longUrl))
 	checksum := hasher.Sum(nil)
 
-	db := utils.ConnectDB()
+	db := database.ConnectDB()
 	defer db.Close()
-	queries := database.New(db)
+	queries := sqlc.New(db)
 
 	// Only get 8 characters long hash
 	hashUrl := hex.EncodeToString(checksum[:4])
@@ -78,7 +79,7 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Insert the URL in the database if doesn't exists
-		_, err = queries.CreateShortLink(r.Context(), database.CreateShortLinkParams{
+		_, err = queries.CreateShortLink(r.Context(), sqlc.CreateShortLinkParams{
 			OriginalUrl: longUrl,
 			Code:        hashUrl,
 		})
