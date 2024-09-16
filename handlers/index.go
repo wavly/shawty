@@ -11,13 +11,11 @@ import (
 	"strings"
 
 	"github.com/wavly/shawty/database"
+	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
 
 func Main(w http.ResponseWriter, r *http.Request) {
-	db := database.ConnectDB()
-	defer db.Close()
-
 	inputUrl := r.FormValue("url")
 	customCode := r.FormValue("code")
 
@@ -61,6 +59,10 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	db := database.ConnectDB()
+	defer db.Close()
+	queries := sqlc.New(db)
+
 	if customCode != "" {
 		// Check if the url exists in the database
 		err := db.QueryRow("select code from urls where code = ?", customCode).Err()
@@ -74,7 +76,10 @@ func Main(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Insert the URL in the database if doesn't exists
-			err = db.QueryRow("insert into urls (original_url, code) values (?, ?)", inputUrl, customCode).Err()
+			_, err = queries.CreateShortLink(r.Context(), sqlc.CreateShortLinkParams{
+				OriginalUrl: inputUrl,
+				Code: customCode,
+			})
 			if err != nil {
 				w.Write([]byte("An unexpected error occur when saving the URL to the database"))
 				log.Println("Failed to store URL in the database", err)
@@ -111,7 +116,10 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Insert the URL in the database if doesn't exists
-		err = db.QueryRow("insert into urls (original_url, code) values (?, ?)", inputUrl, hashUrl).Err()
+		_, err = queries.CreateShortLink(r.Context(), sqlc.CreateShortLinkParams{
+			OriginalUrl: inputUrl,
+			Code: hashUrl,
+		})
 		if err != nil {
 			w.Write([]byte("An unexpected error occur when saving the URL to the database"))
 			log.Println("Failed to store URL in the database", err)
