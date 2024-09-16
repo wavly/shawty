@@ -22,11 +22,7 @@ type AccessCount struct {
 func Stats(w http.ResponseWriter, r *http.Request) {
 	inputCode := r.PathValue("code")
 
-	// Don't query database if input URL lenght is less than 8
-	if len(inputCode) < 8 {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	} else if len(inputCode) > 8 { // Else check if input URL lenght is greater than 8
+	if len(inputCode) > 8 {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
