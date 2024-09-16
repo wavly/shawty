@@ -72,4 +72,4 @@ We welcome any contributions to this project! For guidelines on how to contribut
 
 ## LICENSE
 
-- Shawty is [License](LICENSE) under MIT
+- Shawty is [Licensed](LICENSE) under MIT
