@@ -8,6 +8,7 @@ import (
 
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/wavly/shawty/database"
+	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
 
@@ -26,6 +27,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Open a connection to the database
 	db := database.ConnectDB()
 	defer db.Close()
+	queries := sqlc.New(db)
 
 	var originalUrl string
 	cache, err := mcClient.Get(code)
@@ -34,8 +36,8 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 			log.Println("Memcache error:", err)
 		}
 
-		row := db.QueryRow("select original_url from urls where code = ?", code)
-		if err := row.Scan(&originalUrl); err != nil {
+		originalUrl, err = queries.GetOriginalUrl(r.Context(), code)
+		if err != nil {
 			if err != sql.ErrNoRows {
 				utils.ServerErrTempl(w, "An error occur when querying the database")
 				log.Println("Failed to retrive original_url from the database:", err)
@@ -56,7 +58,10 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, cacheOriginalUrl, http.StatusFound)
 
 		// Update the accessed_count and last_accessed in one query
-		_, err = db.Exec("update urls set accessed_count = accessed_count + 1, last_accessed = ? where code = ?", time.Now().UTC(), code)
+		err = queries.UpdateAccessedAndLastCount(r.Context(), sqlc.UpdateAccessedAndLastCountParams{
+			Code:         code,
+			LastAccessed: sql.NullTime{Time: time.Now().UTC(), Valid: true},
+		})
 		if err != nil {
 			log.Println("Failed to update accessed_count and last_accessed:", err)
 			return
@@ -68,7 +73,10 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, originalUrl, http.StatusFound)
 
 	// Update the accessed_count and last_accessed in one query
-	_, err = db.Exec("update urls set accessed_count = accessed_count + 1, last_accessed = ? where code = ?", time.Now().UTC(), code)
+	err = queries.UpdateAccessedAndLastCount(r.Context(), sqlc.UpdateAccessedAndLastCountParams{
+		Code:         code,
+		LastAccessed: sql.NullTime{Time: time.Now().UTC(), Valid: true},
+	})
 	if err != nil {
 		log.Println("Failed to update accessed_count and last_accessed:", err)
 		return
