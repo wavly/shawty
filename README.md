@@ -29,6 +29,8 @@ also checks if the URL contains a valid
 - Go (version 1.20 or higher) - [Download](https://go.dev/doc/install)
 - Memcached - [Download](http://memcached.org/)
 - Turso Account - [Website](https://turso.tech)
+- NodeJS - [Website](https://nodejs.org/en)
+- More in [requirements](#Requirements)
 
 ### Installation and Setup
 
