@@ -48,6 +48,23 @@ func (q *Queries) GetOriginalUrl(ctx context.Context, code string) (string, erro
 	return original_url, err
 }
 
+const getShortCodeInfo = `-- name: GetShortCodeInfo :one
+SELECT accessed_count, original_url, last_accessed FROM urls WHERE code = ?
+`
+
+type GetShortCodeInfoRow struct {
+	AccessedCount int64
+	OriginalUrl   string
+	LastAccessed  sql.NullTime
+}
+
+func (q *Queries) GetShortCodeInfo(ctx context.Context, code string) (GetShortCodeInfoRow, error) {
+	row := q.db.QueryRowContext(ctx, getShortCodeInfo, code)
+	var i GetShortCodeInfoRow
+	err := row.Scan(&i.AccessedCount, &i.OriginalUrl, &i.LastAccessed)
+	return i, err
+}
+
 const updateAccessedAndLastCount = `-- name: UpdateAccessedAndLastCount :exec
 UPDATE urls SET accessed_count = accessed_count + 1, last_accessed = ? WHERE code = ?
 `

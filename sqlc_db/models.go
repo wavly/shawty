@@ -6,13 +6,14 @@ package sqlc_db
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Url struct {
 	ID            int64
 	OriginalUrl   string
 	Code          string
-	CreatedAt     sql.NullTime
-	AccessedCount sql.NullInt64
+	CreatedAt     time.Time
+	AccessedCount int64
 	LastAccessed  sql.NullTime
 }
