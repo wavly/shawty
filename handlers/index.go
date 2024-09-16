@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	sqlc "github.com/wavly/shawty/sqlc_db"
+	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
 )
 
@@ -60,7 +60,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 
 	db := utils.ConnectDB()
 	defer db.Close()
-	queries := sqlc.New(db)
+	queries := database.New(db)
 
 	if customCode != "" {
 		// Check if the url exists in the database
@@ -75,7 +75,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Insert the URL in the database if doesn't exists
-			_, err = queries.CreateShortLink(r.Context(), sqlc.CreateShortLinkParams{
+			_, err = queries.CreateShortLink(r.Context(), database.CreateShortLinkParams{
 				OriginalUrl: inputUrl,
 				Code: customCode,
 			})
@@ -115,7 +115,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Insert the URL in the database if doesn't exists
-		_, err = queries.CreateShortLink(r.Context(), sqlc.CreateShortLinkParams{
+		_, err = queries.CreateShortLink(r.Context(), database.CreateShortLinkParams{
 			OriginalUrl: inputUrl,
 			Code: hashUrl,
 		})
