@@ -44,7 +44,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			http.Redirect(w, r, "/", http.StatusBadRequest)
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
 
