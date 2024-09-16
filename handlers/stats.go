@@ -41,7 +41,9 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		notFoundTempl := template.Must(template.ParseFiles("./templs/404.html"))
+		w.WriteHeader(http.StatusNotFound)
+		notFoundTempl.Execute(w, nil)
 		return
 	}
 
