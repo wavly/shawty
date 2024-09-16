@@ -56,5 +56,11 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	// Checking if the last accessed timestamp is not null
+	// And if true: set the LastAccessed value to "None"
+	if !shortLinkInfo.LastAccessed.Valid {
+		data.LastAccessed = "None"
+	}
+
 	asserts.NoErr(templ.Execute(w, data), "Failed to execute template stat.html")
 }
