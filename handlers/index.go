@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/wavly/shawty/database"
-	"github.com/wavly/shawty/utils"
 )
 
 func Main(w http.ResponseWriter, r *http.Request) {
@@ -18,18 +18,62 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	inputUrl := r.FormValue("url")
+	customCode := r.FormValue("code")
 
-	// Check if inputUrl contains valid schema "://" and if not then added it manually
-	if !strings.Contains(inputUrl, "://") {
-		inputUrl = "https://" + inputUrl
-	} else if !strings.Contains(inputUrl, "http") { // Check if inputUrl schema is http(s)
-		w.Write([]byte("Only http or https schema is allowed"))
+	// Check the lenght of the customCode
+	if len(customCode) > 8 {
+		w.Write([]byte("Max lenght of the custom code is 8"))
 		return
 	}
 
-	// Check if URL is valid by checking if it contains TLD (Top-Level Domain)
+	// Check if inputUrl contains "://" and add "https://" if missing
+	if !strings.Contains(inputUrl, "://") {
+		inputUrl = "https://" + inputUrl
+	}
+
+	// Parse the URL to validate it and check its scheme
+	parsedUrl, err := url.Parse(inputUrl)
+	if err != nil || parsedUrl.Scheme != "https" {
+		w.Write([]byte("Invalid URL. Only HTTPS schema is allowed"))
+		return
+	}
+
+	// Check if URL contains a TLD (Top-Level Domain)
 	if !strings.Contains(inputUrl, ".") {
-		w.Write([]byte("Enter a valid URL"))
+		w.Write([]byte("The URL doesn't contain TLD (Top-Level Domain)"))
+		return
+	} else if split := strings.SplitN(inputUrl, ".", 2); split[1] == "" {
+		w.Write([]byte("The URL doesn't contain TLD (Top-Level Domain)"))
+		return
+	}
+
+	if customCode != "" {
+		// Check if the url exists in the database
+		err := db.QueryRow("select code from urls where code = ?", customCode).Err()
+		if err != nil {
+			// Check if err doesn't equal to `sql.ErrNoRows`
+			// And if true then log the error and return
+			if err != sql.ErrNoRows {
+				w.Write([]byte("An unexpected error occur when querying from the database"))
+				log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", customCode, err)
+				return
+			}
+
+			// Insert the URL in the database if doesn't exists
+			err = db.QueryRow("insert into urls (original_url, code) values (?, ?)", inputUrl, customCode).Err()
+			if err != nil {
+				w.Write([]byte("An unexpected error occur when saving the URL to the database"))
+				log.Println("Failed to store URL in the database", err)
+				return
+			}
+
+			w.WriteHeader(http.StatusCreated)
+			w.Write([]byte(fmt.Sprintf("Location: /s/%s", customCode)))
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		w.Write([]byte(fmt.Sprintf("Location: /s/%s", customCode)))
 		return
 	}
 
@@ -42,20 +86,20 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	hashUrl := hex.EncodeToString(checksum[:4])
 
 	// Check if the url exists in the database
-	row := db.QueryRow("select code from urls where code = ?", hashUrl)
-	if err := row.Err(); err != nil {
+	err = db.QueryRow("select code from urls where code = ?", hashUrl).Err()
+	if err != nil {
 		// Check if err doesn't equal to `sql.ErrNoRows`
 		// And if true then log the error and return
 		if err != sql.ErrNoRows {
-			utils.ServerErrTempl(w, "An unexpected error occur when querying from the database")
+			w.Write([]byte("An unexpected error occur when querying from the database"))
 			log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", hashUrl, err)
 			return
 		}
 
 		// Insert the URL in the database if doesn't exists
-		row = db.QueryRow("insert into urls (original_url, code) values (?, ?)", inputUrl, hashUrl)
-		if err := row.Err(); err != nil {
-			utils.ServerErrTempl(w, "An unexpected error occur when saving the URL to the database")
+		err = db.QueryRow("insert into urls (original_url, code) values (?, ?)", inputUrl, hashUrl).Err()
+		if err != nil {
+			w.Write([]byte("An unexpected error occur when saving the URL to the database"))
 			log.Println("Failed to store URL in the database", err)
 			return
 		}
