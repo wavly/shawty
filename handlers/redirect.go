@@ -8,6 +8,7 @@ import (
 
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/wavly/shawty/database"
+	"github.com/wavly/shawty/utils"
 )
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +37,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		row := db.QueryRow("select original_url from urls where code = ?", code)
 		if err := row.Scan(&originalUrl); err != nil {
 			if err != sql.ErrNoRows {
-				http.Error(w, "Sorry, an unexpected error occur when querying the database", http.StatusInternalServerError)
+				utils.ServerErrTempl(w, "An error occur when querying the database")
 				log.Println("Failed to retrive original_url from the database:", err)
 				return
 			}

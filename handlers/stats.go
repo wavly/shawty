@@ -9,6 +9,7 @@ import (
 	"github.com/mergestat/timediff"
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/database"
+	"github.com/wavly/shawty/utils"
 )
 
 type AccessCount struct {
@@ -36,7 +37,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := db.Query("select accessed_count, original_url, last_accessed from urls where code = ?", inputCode)
 	if err != nil {
-		http.Error(w, "Sorry, an unexpected error occur", http.StatusInternalServerError)
+		utils.ServerErrTempl(w, "An error occur when querying the database")
 		log.Printf("Database error when selecting accessed_count and original_url where code = %s, Error %s\n", inputCode, err)
 		return
 	}
@@ -55,7 +56,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	// Scan the result
 	err = rows.Scan(&accessedCount, &originalUrl, &lastAccessed)
 	if err != nil {
-		http.Error(w, "Sorry, an unexpected error occur", http.StatusInternalServerError)
+		utils.ServerErrTempl(w, "An unexpected error occur")
 		log.Printf("Error scanning the result: %s", err)
 		return
 	}
