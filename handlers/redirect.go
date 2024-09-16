@@ -22,6 +22,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// MemcacheD Client
 	mcClient := memcache.New("0.0.0.0:11211")
 
+	// Open a connection to the database
 	db := database.ConnectDB()
 	defer db.Close()
 
@@ -44,15 +45,12 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Cache Miss:", originalUrl)
 		err = mcClient.Set(&memcache.Item{Key: code, Value: []byte(originalUrl)})
 		if err != nil {
 			log.Println("Memcache error when setting the key:", err)
 		}
 	} else if cache != nil && cache.Value != nil { // Check if original URL is in the cache
 		cacheOriginalUrl := string(cache.Value)
-		log.Println("Cashe Hit", cacheOriginalUrl)
-
 		// Redirect to original URL
 		http.Redirect(w, r, cacheOriginalUrl, http.StatusFound)
 
