@@ -10,3 +10,6 @@ INSERT INTO urls (
   code
 ) VALUES ( ?, ? )
 RETURNING *;
+
+-- name: GetShortCodeInfo :one
+SELECT accessed_count, original_url, last_accessed FROM urls WHERE code = ?;
