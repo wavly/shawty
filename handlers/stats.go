@@ -1,20 +1,21 @@
 package handlers
 
 import (
+	"database/sql"
 	"html/template"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/mergestat/timediff"
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/database"
+	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
 
 type AccessCount struct {
 	ShortLink
-	Count int
+	Count int64
 
 	LastAccessed string
 }
@@ -30,39 +31,26 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	templ := template.Must(template.ParseFiles("./templs/stat.html"))
 	db := database.ConnectDB()
 	defer db.Close()
+	queries := sqlc.New(db)
 
-	rows, err := db.Query("select accessed_count, original_url, last_accessed from urls where code = ?", inputCode)
+	shortLinkInfo, err := queries.GetShortCodeInfo(r.Context(), inputCode)
 	if err != nil {
-		utils.ServerErrTempl(w, "An error occur when querying the database")
-		log.Printf("Database error when selecting accessed_count and original_url where code = %s, Error %s\n", inputCode, err)
-		return
-	}
-	defer rows.Close()
+		if err != sql.ErrNoRows {
+			utils.ServerErrTempl(w, "An error occur when querying the database")
+			log.Printf("Database error when selecting accessed_count and original_url where code = %s, Error %s\n", inputCode, err)
+			return
+		}
 
-	var accessedCount int
-	var originalUrl string
-	var lastAccessed time.Time
-
-	// Redirect if no result is found
-	if !rows.Next() {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	// Scan the result
-	err = rows.Scan(&accessedCount, &originalUrl, &lastAccessed)
-	if err != nil {
-		utils.ServerErrTempl(w, "An unexpected error occur")
-		log.Printf("Error scanning the result: %s", err)
-		return
-	}
-
 	data := AccessCount{
-		Count: accessedCount,
-		LastAccessed: timediff.TimeDiff(lastAccessed),
+		Count:        shortLinkInfo.AccessedCount,
+		LastAccessed: timediff.TimeDiff(shortLinkInfo.LastAccessed.Time),
 		ShortLink: ShortLink{
 			ShortUrl:    inputCode,
-			OriginalUrl: originalUrl,
+			OriginalUrl: shortLinkInfo.OriginalUrl,
 		},
 	}
 
