@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="title" content="Internal Server Error">
+  <meta name="description" content="Shawty is a tool for shortening long URLs making it easy to share them">
+  <title>Internal Server Error</title>
+  <link rel="stylesheet" href="/static/dist.css">
+</head>
+
+<body class="bg-[#090909]">
+  <div class="px-2 text-center">
+    <div class="h-screen flex flex-col justify-center items-center">
+      <h1 class="text-8xl font-extrabold text-red-500">500</h1>
+      <p class="text-4xl font-medium text-white">Internal Server Error</p>
+      <p class="text-xl text-[#ada9a9] mt-4">We apologize for the inconvenience. Please try again later.</p>
+      <p class="text-xl text-[#ada9a9] mt-4">{{ . }}</p>
+    </div>
+  </div>
+</body>
