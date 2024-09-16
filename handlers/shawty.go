@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/database"
 	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
@@ -57,7 +56,7 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	hasher.Write([]byte(longUrl))
 	checksum := hasher.Sum(nil)
 
-	db := database.ConnectDB()
+	db := utils.ConnectDB()
 	defer db.Close()
 	queries := sqlc.New(db)
 
