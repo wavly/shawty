@@ -12,6 +12,7 @@ import (
 
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/database"
+	sqlc "github.com/wavly/shawty/sqlc_db"
 	"github.com/wavly/shawty/utils"
 )
 
@@ -21,9 +22,6 @@ type ShortLink struct {
 }
 
 func Shawty(w http.ResponseWriter, r *http.Request) {
-	db := database.ConnectDB()
-	defer db.Close()
-
 	longUrl := r.FormValue("url")
 
 	// Check if longUrl contains "://" and add "https://" if missing
@@ -59,6 +57,10 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	hasher.Write([]byte(longUrl))
 	checksum := hasher.Sum(nil)
 
+	db := database.ConnectDB()
+	defer db.Close()
+	queries := sqlc.New(db)
+
 	// Only get 8 characters long hash
 	hashUrl := hex.EncodeToString(checksum[:4])
 
@@ -77,8 +79,11 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Insert the URL in the database if doesn't exists
-		row = db.QueryRow("insert into urls (original_url, code) values (?, ?)", longUrl, hashUrl)
-		if err := row.Err(); err != nil {
+		_, err = queries.CreateShortLink(r.Context(), sqlc.CreateShortLinkParams{
+			OriginalUrl: longUrl,
+			Code:        hashUrl,
+		})
+		if err != nil {
 			utils.ServerErrTempl(w, "An error occur when saving the URL to the database")
 			log.Println("Failed to store URL in the database", err)
 			return
