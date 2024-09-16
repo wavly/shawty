@@ -27,6 +27,12 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check the lenght of the URL
+	if len(inputUrl) > 1000 {
+		w.Write([]byte("The URL is too long, Max URL lenght is 1000 characters"))
+		return
+	}
+
 	// Only allow characters [a-z]/[A-Z] in customCode
 	if !utils.IsAcsii(customCode) {
 		w.WriteHeader(http.StatusBadRequest)
