@@ -1,6 +1,9 @@
 package utils
 
-import "unicode"
+import (
+	"unicode"
+	"unicode/utf8"
+)
 
 func IsAplphabet(text string) bool {
 	for _, s := range text {
@@ -12,10 +15,5 @@ func IsAplphabet(text string) bool {
 }
 
 func IsASCII(text string) bool {
-	for i := 0; i < len(text); i++ {
-		if text[i] > unicode.MaxASCII {
-			return false
-		}
-	}
-	return true
+	return utf8.RuneCount([]byte(text)) == len(text)
 }
