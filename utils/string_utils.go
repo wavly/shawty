@@ -10,3 +10,12 @@ func IsAplphabet(text string) bool {
 	}
 	return true
 }
+
+func IsASCII(text string) bool {
+	for i := 0; i < len(text); i++ {
+		if text[i] > unicode.MaxASCII {
+			return false
+		}
+	}
+	return true
+}
