@@ -13,3 +13,6 @@ RETURNING *;
 
 -- name: GetShortCodeInfo :one
 SELECT accessed_count, original_url, last_accessed FROM urls WHERE code = ?;
+
+-- name: GetCode :one
+SELECT code FROM urls WHERE code = ?;
