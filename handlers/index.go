@@ -7,33 +7,22 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
+	"github.com/wavly/shawty/validate"
 )
 
 func Main(w http.ResponseWriter, r *http.Request) {
 	inputUrl := r.FormValue("url")
 	customCode := r.FormValue("code")
 
-	// Check the lenght of the customCode
-	if len(customCode) > 8 {
-		w.Write([]byte("Max lenght of the custom code is 8"))
-		return
-	}
-
-	// Check the lenght of the URL
-	if len(inputUrl) > 1000 {
-		w.Write([]byte("The URL is too long, Max URL lenght is 1000 characters"))
-		return
-	}
-
-	// Only allow characters [a-z]/[A-Z] in customCode
-	if !utils.IsAcsii(customCode) {
+	// Validate customCode
+	err := validate.CustomCodeValidate(customCode)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Only alphabetic characters are allowed in the custom code"))
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -42,19 +31,11 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		inputUrl = "https://" + inputUrl
 	}
 
-	// Parse the URL to validate it and check its scheme
-	parsedUrl, err := url.Parse(inputUrl)
-	if err != nil || parsedUrl.Scheme != "https" {
-		w.Write([]byte("Invalid URL. Only HTTPS schema is allowed"))
-		return
-	}
-
-	// Check if URL contains a TLD (Top-Level Domain)
-	if !strings.Contains(inputUrl, ".") {
-		w.Write([]byte("The URL doesn't contain TLD (Top-Level Domain)"))
-		return
-	} else if split := strings.SplitN(inputUrl, ".", 2); split[1] == "" {
-		w.Write([]byte("The URL doesn't contain TLD (Top-Level Domain)"))
+	// Validate the URL
+	err = validate.ValidateUrl(inputUrl)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -64,20 +45,20 @@ func Main(w http.ResponseWriter, r *http.Request) {
 
 	if customCode != "" {
 		// Check if the url exists in the database
-		err := db.QueryRow("select code from urls where code = ?", customCode).Err()
+		_, err := queries.GetCode(r.Context(), customCode)
 		if err != nil {
 			// Check if err doesn't equal to `sql.ErrNoRows`
 			// And if true then log the error and return
 			if err != sql.ErrNoRows {
 				w.Write([]byte("An unexpected error occur when querying from the database"))
-				log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", customCode, err)
+				log.Printf("Database error when selecting code where code = %s, Error: %s\n", customCode, err)
 				return
 			}
 
 			// Insert the URL in the database if doesn't exists
 			_, err = queries.CreateShortLink(r.Context(), database.CreateShortLinkParams{
 				OriginalUrl: inputUrl,
-				Code: customCode,
+				Code:        customCode,
 			})
 			if err != nil {
 				w.Write([]byte("An unexpected error occur when saving the URL to the database"))
@@ -104,7 +85,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	hashUrl := hex.EncodeToString(checksum[:4])
 
 	// Check if the url exists in the database
-	err = db.QueryRow("select code from urls where code = ?", hashUrl).Err()
+	_, err = queries.GetCode(r.Context(), customCode)
 	if err != nil {
 		// Check if err doesn't equal to `sql.ErrNoRows`
 		// And if true then log the error and return
@@ -117,8 +98,9 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		// Insert the URL in the database if doesn't exists
 		_, err = queries.CreateShortLink(r.Context(), database.CreateShortLinkParams{
 			OriginalUrl: inputUrl,
-			Code: hashUrl,
+			Code:        hashUrl,
 		})
+
 		if err != nil {
 			w.Write([]byte("An unexpected error occur when saving the URL to the database"))
 			log.Println("Failed to store URL in the database", err)
