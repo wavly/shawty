@@ -24,6 +24,9 @@ func main() {
 	// Serving static files
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
+	// Route for index page
+	router.Handle("GET /", http.FileServer(http.Dir("./static/")))
+
 	// Reading the URLS-SQL schema file
 	fileBytes, err := os.ReadFile("./schema/urls.sql")
 	asserts.NoErr(err, "Failed to read URLS-SQL schema file")
@@ -42,9 +45,6 @@ func main() {
 
 	// Route for shortening the URL
 	router.HandleFunc("POST /", handlers.Main)
-
-	// Route for index page
-	router.Handle("GET /", http.FileServer(http.Dir("./static/")))
 
 	// Route for stats page
 	router.HandleFunc("GET /stat/{code}", handlers.Stats)
