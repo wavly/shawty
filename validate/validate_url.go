@@ -62,7 +62,7 @@ func ValidateUrl(link string) error {
 		return &DomainTooLong{}
 	}
 
-	if !utils.IsASCII(split[0]) || !utils.IsASCII(split[1]) {
+	if !utils.IsASCII(link) {
 		return &InvalidDomainFormat{}
 	}
 
