@@ -37,6 +37,16 @@ func (q *Queries) CreateShortLink(ctx context.Context, arg CreateShortLinkParams
 	return i, err
 }
 
+const getCode = `-- name: GetCode :one
+SELECT code FROM urls WHERE code = ?
+`
+
+func (q *Queries) GetCode(ctx context.Context, code string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getCode, code)
+	err := row.Scan(&code)
+	return code, err
+}
+
 const getOriginalUrl = `-- name: GetOriginalUrl :one
 SELECT original_url FROM urls where code = ?
 `
