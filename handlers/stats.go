@@ -23,8 +23,8 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	inputCode := r.PathValue("code")
 
 	if len(inputCode) > 8 {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
+		w.WriteHeader(http.StatusNotFound)
+		http.ServeFile(w, r, "./templs/404.html")
 	}
 
 	templ := template.Must(template.ParseFiles("./templs/stat.html"))
