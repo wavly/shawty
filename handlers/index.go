@@ -5,6 +5,7 @@ import (
     "database/sql"
     "encoding/hex"
     "fmt"
+    "html"
     "log"
     "net/http"
     "strings"
@@ -65,7 +66,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
             }
 
             w.WriteHeader(http.StatusCreated)
-            w.Write([]byte(fmt.Sprintf("Location: /s/%s", customCode)))
+            w.Write([]byte(fmt.Sprintf("Location: /s/%s", html.EscapeString(customCode))))
             return
         }
 
