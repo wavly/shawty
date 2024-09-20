@@ -45,7 +45,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 
 	if customCode != "" {
 		// Check if the url exists in the database
-		_, err := queries.GetCode(r.Context(), customCode)
+		code, err := queries.GetCode(r.Context(), customCode)
 		if err != nil {
 			// Check if err doesn't equal to `sql.ErrNoRows`
 			// And if true then log the error and return
@@ -58,7 +58,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 			// Insert the URL in the database if doesn't exists
 			_, err = queries.CreateShortLink(r.Context(), database.CreateShortLinkParams{
 				OriginalUrl: inputUrl,
-				Code:        customCode,
+				Code:        code,
 			})
 			if err != nil {
 				w.Write([]byte("An unexpected error occur when saving the URL to the database"))
@@ -67,12 +67,12 @@ func Main(w http.ResponseWriter, r *http.Request) {
 			}
 
 			w.WriteHeader(http.StatusCreated)
-			w.Write([]byte(fmt.Sprintf("Location: /s/%s", customCode)))
+			w.Write([]byte(fmt.Sprintf("Location: /s/%s", code)))
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(fmt.Sprintf("Location: /s/%s", customCode)))
+		w.Write([]byte(fmt.Sprintf("Location: /s/%s", code)))
 		return
 	}
 
