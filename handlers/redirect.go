@@ -4,7 +4,6 @@ import (
     "database/sql"
     "log"
     "net/http"
-    "strings"
     "time"
 
     "github.com/bradfitz/gomemcache/memcache"
@@ -13,25 +12,12 @@ import (
 )
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
-    path := r.URL.Path
-
-    // Check if the URL path starts with "/stat/" and contains 9 digits
-    if strings.HasPrefix(path, "/stat/") {
-        statCode := path[len("/stat/"):]
-        if len(statCode) > 8 {
-            // Return 404 for /stat/ with exactly 9 characters after
-            w.WriteHeader(http.StatusNotFound)
-            http.ServeFile(w, r, "./templs/404.html")
-            return
-        }
-    }
-
     // Get the URL-Path slug "url"
-    code := path[len("/s/"):]
+    code := r.URL.Path[len("/s/"):]
 
     if len(code) > 8 {
-        w.WriteHeader(http.StatusNotFound)
         http.ServeFile(w, r, "./templs/404.html")
+        w.WriteHeader(http.StatusNotFound)
         return
     }
 
@@ -48,16 +34,13 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
     if err != nil {
         if err != memcache.ErrCacheMiss {
             log.Println("Memcache error:", err)
-            w.WriteHeader(http.StatusNotFound)
-            http.ServeFile(w, r, "./templs/404.html")
-            return
         }
 
         originalUrl, err = queries.GetOriginalUrl(r.Context(), code)
         if err != nil {
             if err == sql.ErrNoRows {
-                w.WriteHeader(http.StatusNotFound)
                 http.ServeFile(w, r, "./templs/404.html")
+                w.WriteHeader(http.StatusNotFound)
                 return
             }
 
@@ -82,8 +65,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
         })
         if err != nil {
             log.Println("Failed to update accessed_count and last_accessed:", err)
-            w.WriteHeader(http.StatusNotFound)
-            http.ServeFile(w, r, "./templs/404.html")
             return
         }
         return
@@ -99,8 +80,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
     })
     if err != nil {
         log.Println("Failed to update accessed_count and last_accessed:", err)
-        w.WriteHeader(http.StatusNotFound)
-        http.ServeFile(w, r, "./templs/404.html")
         return
     }
 }
