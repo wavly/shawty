@@ -9,13 +9,15 @@ import (
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
+	"github.com/wavly/shawty/validate"
 )
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Get the URL-Path slug "url"
 	code := r.PathValue("code")
 
-	if len(code) > 8 {
+	err := validate.CustomCodeValidate(code)
+	if err != nil {
 		http.Redirect(w, r, "/", http.StatusBadRequest)
 		return
 	}
@@ -53,7 +55,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if cache != nil && cache.Value != nil { // Check if original URL is in the cache
 		cacheOriginalUrl := string(cache.Value)
-		// Redirect to original URL
+
 		http.Redirect(w, r, cacheOriginalUrl, http.StatusFound)
 
 		// Update the accessed_count and last_accessed in one query
@@ -68,7 +70,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirect to original URL
 	http.Redirect(w, r, originalUrl, http.StatusFound)
 
 	// Update the accessed_count and last_accessed in one query
