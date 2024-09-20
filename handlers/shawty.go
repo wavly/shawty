@@ -28,11 +28,11 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		inputUrl = "https://" + inputUrl
 	}
 
-	errorTempl := template.Must(template.ParseFiles("./partial-html/short-link-error.html"))
-
+	// Validate the URL
 	err := validate.ValidateUrl(inputUrl)
 	if err != nil {
-		asserts.NoErr(errorTempl.Execute(w, err.Error()), "Failed to execute template short-link-error.html")
+		errorTempl := template.Must(template.ParseFiles("./partial-html/short-link-error.html"))
+		asserts.NoErr(errorTempl.Execute(w, err), "Failed to execute template short-link-error.html")
 		return
 	}
 
