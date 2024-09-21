@@ -66,8 +66,9 @@ Use the `Makefile` to run/build the web server.
 
 #### Requirements
 
-- [Watchexec](https://github.com/watchexec/watchexec) - A file watcher for restarting and running the web server when the source files are updated
-- [Bun](https://bun.sh) - Bun package manager (or `npm`,`pmpm`) for installing and watching static content for tailwind classes
+- [Watchexec](https://github.com/watchexec/watchexec) - A file watcher for restarting and running the web server when the source files are updated.
+- [Bun](https://bun.sh) - Bun package manager (or `npm`,`pmpm`) for installing and watching static content for tailwind classes.
+- [Sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) - Generating type-safe code from SQL.
 
 #### Commands
 
