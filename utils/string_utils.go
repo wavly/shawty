@@ -17,3 +17,19 @@ func IsAplphabet(text string) bool {
 func IsASCII(text string) bool {
 	return utf8.RuneCount([]byte(text)) == len(text)
 }
+
+func IsAplphabetOrNum(text string) bool {
+	for _, c := range text {
+		if !isValidChar(c) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isValidChar(c rune) bool {
+	return c >= 'a' && c <= 'z' ||
+		c >= 'A' && c <= 'Z' ||
+		c >= '0' && c <= '9'
+}
