@@ -7,5 +7,5 @@ tailminify:
 server:
 	@watchexec -c -r -e go,html go run .
 
-slqc:
+sqlc:
 	@sqlc generate
