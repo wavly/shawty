@@ -2,24 +2,43 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/joho/godotenv"
 	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/utils"
 	"github.com/wavly/shawty/handlers"
+	"github.com/wavly/shawty/utils"
 )
-
-const PORT string = "1234"
 
 func main() {
 	// Creating the ServerMux router
 	router := http.NewServeMux()
 
-	// Check if memcache is up
-	mcClient := memcache.New("0.0.0.0:11211")
-	asserts.NoErr(mcClient.Ping(), "Failed to ping MemcacheD")
+	err := godotenv.Load(".env.local")
+	asserts.NoErr(err, "Failed reading .env.local")
+
+	port := os.Getenv("PORT")
+	asserts.AssertEq(port == "", "Please specify the PORT number in .env.local")
+
+	environment := os.Getenv("ENVIRONMENT")
+	asserts.AssertEq(environment == "", "Please specify the ENVIRONMENT in .env.local")
+
+	var mcClient *memcache.Client
+	switch environment {
+	case "dev":
+		mcClient = memcache.New("0.0.0.0:11211")
+		if err := mcClient.Ping(); err != nil {
+			log.Println("Memcached listener is not up!")
+		}
+	case "prod":
+		mcClient = memcache.New("0.0.0.0:11211")
+		asserts.NoErr(mcClient.Ping(), "Memcached listener is required in production environment")
+	default:
+		log.Fatalln("Unrecognize environment value:", environment)
+	}
 
 	// Serving static files
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
@@ -55,6 +74,6 @@ func main() {
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
-	fmt.Println("Listening on:", PORT)
-	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+PORT, router), "Failed to start the server:")
+	fmt.Println("Listening on:", port)
+	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+port, router), "Failed to start the server:")
 }
