@@ -1,6 +1,5 @@
 <!doctype html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,28 +8,27 @@
   <script src="https://unpkg.com/htmx.org@2.0.2"
     integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
     crossorigin="anonymous"></script>
-  <title>Shawty</title>
+  <title>Shawty - URL Statistics</title>
   <link rel="stylesheet" href="/static/dist.css">
 </head>
-
-<body class="bg-[#090909] text-[#ada9a9] mt-8">
-  <h1 class="text-5xl text-center text-white font-bold">Shawty</h1>
-  <div class="w-[56rem] flex flex-col gap-3 my-8 mx-auto">
-    <h2 class="text-3xl font-bold font-mono">Total number of clicks</h2>
-    <p class="text-lg">The number of clicks from the shortened URL that redirected the user to the destination page.</p>
-    <a class="underline bg-[#292929] font-mono p-2 w-fit rounded-md text-white" href="/s/{{ .ShortUrl }}">shawty/s/{{
-      .ShortUrl }}</a>
-    <p class="text-lg font-bold flex gap-3">Original URL : <a class="underline font-mono" href="{{ .OriginalUrl }}">{{
-        .OriginalUrl }}</a></p>
-    <h3 class="font-bold text-xl font-mono">Count: {{ .Count }}</h3>
-    <h3 class="font-bold text-xl font-mono">Last Accessed: {{ .LastAccessed }}</h3>
+<body class="bg-[#090909] text-[#ada9a9] min-h-screen flex flex-col items-center px-4 sm:px-6 lg:px-8 py-8 mt-8">
+  <h1 class="text-4xl md:text-5xl text-center text-white font-bold mb-8">Shawty</h1>
+  <div class="fw-full max-w-4xl flex flex-col gap-3 my-4 mx-auto">
+    <h2 class="text-2xl sm:text-3xl font-bold font-mono">Total number of clicks</h2>
+    <p class="text-base sm:text-lg">The number of clicks from the shortened URL that redirected the user to the destination page.</p>
+    <a class="underline bg-[#292929] font-mono p-2 w-fit rounded-md text-white break-all" href="/s/{{ .ShortUrl }}">shawty/s/{{ .ShortUrl }}</a>
+    <p class="text-base sm:text-lg font-bold flex flex-col sm:flex-row gap-2 sm:gap-3">
+      <span>Original URL:</span>
+      <a class="underline font-mono break-all" href="{{ .OriginalUrl }}">{{ .OriginalUrl }}</a>
+    </p>
+    <h3 class="font-bold text-lg sm:text-xl font-mono">Count: {{ .Count }}</h3>
+    <h3 class="font-bold text-lg sm:text-xl font-mono">Last Accessed: {{ .LastAccessed }}</h3>
   </div>
-  <div class="flex justify-center mt-4">
+  <div class="mt-8">
     <a href="/"
       class="px-4 py-2 font-semibold rounded-full transition duration-300 ease-in-out bg-gray-700 hover:bg-gray-600 text-white">
       Go Home
     </a>
   </div>
 </body>
-
 </html>

@@ -1,6 +1,36 @@
-<div class="flex flex-col items-center gap-2 text-lg font-mono mb-2 mt-10 text-center">
-  <a class="underline text-white" href="/s/{{ .ShortUrl }}">shawty/s/{{ .ShortUrl }}</a>
-  <p>Long URL: <a class="underline" href="{{ .OriginalUrl }}">{{ .OriginalUrl }}</a></p>
-
-  <a class="my-3 hover:underline w-fit p-3 rounded-md bg-zinc-700" href="/stat/{{ .ShortUrl }}">Total clicks of your short URL</a>
+<div class="flex flex-col items-center gap-4 text-lg font-mono mb-2 mt-10 text-center">
+  <div class="flex items-center gap-2">
+    <a class="underline text-white" href="/s/{{ .ShortUrl }}">shawty/s/{{ .ShortUrl }}</a>
+    <button onclick="copyToClipboard(this, '/s/{{ .ShortUrl }}')" class="bg-zinc-700 hover:bg-zinc-600 text-white font-bold py-1 px-3 rounded transition duration-300">
+      Copy
+    </button>
+  </div>
+  <p class="text-sm sm:text-base">Long URL: <a class="underline break-all" href="{{ .OriginalUrl }}">{{ .OriginalUrl }}</a></p>
+  <div class="flex gap-2">
+    <a class="hover:underline p-2 rounded-md bg-zinc-700 transition duration-300 hover:bg-zinc-600" href="/stat/{{ .ShortUrl }}">See the stats for your short URL here</a>
+  </div>
 </div>
+
+<script>
+function copyToClipboard(target, text) {
+  const basename = window.location.origin;
+
+  navigator.clipboard
+    .writeText(basename + text)
+    .then(() => {
+      const originalText = target.textContent;
+      target.textContent = "Copied!";
+      target.classList.add("opacity-50");
+      target.classList.add("cursor-not-allowed");
+
+      setTimeout(() => {
+        target.textContent = originalText;
+        target.classList.remove("opacity-50");
+        target.classList.remove("cursor-not-allowed");
+      }, 500);
+    })
+    .catch((err) => {
+      console.error("Failed to copy: ", err);
+    });
+}
+</script>
