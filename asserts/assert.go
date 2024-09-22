@@ -8,3 +8,10 @@ func NoErr(err error, msg string) {
 		log.Fatalln(msg, err)
 	}
 }
+
+// logs the message and exits if the boolean check is true
+func AssertEq(check bool, msg ...any) {
+	if check {
+		log.Fatalln(msg...)
+	}
+}
