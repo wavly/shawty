@@ -14,6 +14,8 @@ type DomainTooLong struct{}
 
 type InvalidDomainFormat struct{}
 
+type UrlTooShort struct{}
+
 type UrlTooLong struct {
 	url uint
 }
@@ -28,6 +30,10 @@ func (_ *InvalidDomainFormat) Error() string {
 
 func (link *UrlTooLong) Error() string {
 	return fmt.Sprintf("URL is too long, max lenght is 1000 characters, but got %v", link.url)
+}
+
+func (link *UrlTooShort) Error() string {
+	return "URL is too short, min lenght is 4 characters"
 }
 
 func (_ *InvalidDomainName) Error() string {
@@ -45,6 +51,8 @@ func (_ *DomainTooLong) Error() string {
 func ValidateUrl(link string) error {
 	if len(link) > 1000 {
 		return &UrlTooLong{url: uint(len(link))}
+	} else if len(link) < 4 {
+		return &UrlTooShort{}
 	}
 
 	if !strings.Contains(link, ".") {
