@@ -37,7 +37,7 @@ func CustomCodeValidate(code string) error {
 		return &TooShort{}
 	}
 
-	if !utils.IsAlphaOrNum(code) {
+	if !utils.IsAlphabetOrNum(code) {
 		return &NotAlphaOrNum{text: code}
 	}
 

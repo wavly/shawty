@@ -5,7 +5,7 @@ import (
 	"unicode/utf8"
 )
 
-func IsAplphabet(text string) bool {
+func IsAlphabet(text string) bool {
 	for _, s := range text {
 		if !unicode.IsLetter(s) {
 			return false
@@ -18,7 +18,7 @@ func IsASCII(text string) bool {
 	return utf8.RuneCount([]byte(text)) == len(text)
 }
 
-func IsAplphabetOrNum(text string) bool {
+func IsAlphabetOrNum(text string) bool {
 	for _, c := range text {
 		if !isValidChar(c) {
 			return false
