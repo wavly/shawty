@@ -14,7 +14,7 @@ type TooShort struct {
 	lenght uint
 }
 
-type NotAplphaOrNum struct {
+type NotAlphaOrNum struct {
 	text string
 }
 
@@ -26,8 +26,8 @@ func (_ *TooShort) Error() string {
 	return "Min lenght of the code is 2"
 }
 
-func (code *NotAplphaOrNum) Error() string {
-	return fmt.Sprintf("Only aplphabet characters and numbers are allowed in the code, but got %s", code.text)
+func (code *NotAlphaOrNum) Error() string {
+	return fmt.Sprintf("Only alphabetical characters and numbers are allowed in the code, but got %s", code.text)
 }
 
 func CustomCodeValidate(code string) error {
@@ -37,8 +37,8 @@ func CustomCodeValidate(code string) error {
 		return &TooShort{}
 	}
 
-	if !utils.IsAplphabetOrNum(code) {
-		return &NotAplphaOrNum{text: code}
+	if !utils.IsAlphaOrNum(code) {
+		return &NotAlphaOrNum{text: code}
 	}
 
 	return nil
