@@ -17,7 +17,6 @@ import (
 
 type ShortLink struct {
 	ShortUrl    string
-	OriginalUrl string
 }
 
 func Shawty(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +73,6 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		data := ShortLink{
 			ShortUrl:    hashUrl,
-			OriginalUrl: inputUrl,
 		}
 		asserts.NoErr(templ.Execute(w, data), "Failed to execute template short-link.html")
 		return
@@ -83,7 +81,6 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	data := ShortLink{
 		ShortUrl:    code,
-		OriginalUrl: inputUrl,
 	}
 	asserts.NoErr(templ.Execute(w, data), "Failed to execute template short-link.html")
 }

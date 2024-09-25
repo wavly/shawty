@@ -17,6 +17,7 @@ type AccessCount struct {
 	Count int64
 
 	LastAccessed string
+	OriginalUrl  string
 }
 
 func Stats(w http.ResponseWriter, r *http.Request) {
@@ -49,9 +50,10 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	data := AccessCount{
 		Count:        shortLinkInfo.AccessedCount,
 		LastAccessed: timediff.TimeDiff(shortLinkInfo.LastAccessed.Time),
+		OriginalUrl: shortLinkInfo.OriginalUrl,
+
 		ShortLink: ShortLink{
 			ShortUrl:    inputCode,
-			OriginalUrl: shortLinkInfo.OriginalUrl,
 		},
 	}
 
