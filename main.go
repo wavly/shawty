@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
-	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/joho/godotenv"
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/handlers"
@@ -25,20 +23,6 @@ func main() {
 
 	environment := os.Getenv("ENVIRONMENT")
 	asserts.AssertEq(environment == "", "Please specify the ENVIRONMENT in .env.local")
-
-	var mcClient *memcache.Client
-	switch environment {
-	case "dev":
-		mcClient = memcache.New("0.0.0.0:11211")
-		if err := mcClient.Ping(); err != nil {
-			log.Println("Memcached listener is not up!")
-		}
-	case "prod":
-		mcClient = memcache.New("0.0.0.0:11211")
-		asserts.NoErr(mcClient.Ping(), "Memcached listener is required in production environment")
-	default:
-		log.Fatalln("Unrecognize environment value:", environment)
-	}
 
 	// Serving static files
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
