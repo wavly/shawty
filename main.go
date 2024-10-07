@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/wavly/shawty/asserts"
+	"github.com/wavly/shawty/config"
 	"github.com/wavly/shawty/handlers"
 	"github.com/wavly/shawty/utils"
 )
@@ -15,14 +15,8 @@ func main() {
 	// Creating the ServerMux router
 	router := http.NewServeMux()
 
-	err := godotenv.Load(".env.local")
-	asserts.NoErr(err, "Failed reading .env.local")
-
-	port := os.Getenv("PORT")
-	asserts.AssertEq(port == "", "Please specify the PORT number in .env.local")
-
-	environment := os.Getenv("ENVIRONMENT")
-	asserts.AssertEq(environment == "", "Please specify the ENVIRONMENT in .env.local")
+	// Get the env variables and other config options
+	config.Init()
 
 	// Serving static files
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
@@ -58,6 +52,6 @@ func main() {
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
-	fmt.Println("Listening on:", port)
-	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+port, router), "Failed to start the server:")
+	fmt.Println("Listening on:", config.PORT)
+	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+config.PORT, router), "Failed to start the server:")
 }
