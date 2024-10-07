@@ -3,23 +3,21 @@ package utils
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/wavly/shawty/asserts"
+	"github.com/wavly/shawty/config"
 
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
+	_ "github.com/tursodatabase/go-libsql"
 )
 
 func ConnectDB() *sql.DB {
-	// Loading the environment variables
-	err := godotenv.Load(".env.local")
-	asserts.NoErr(err, "Failed to load environment variables")
+	if config.ENV == "prod" {
+		db, err := sql.Open("libsql", fmt.Sprintf("%s?authToken=%s", config.TURSO_URL, config.TURSO_TOKEN))
+		asserts.NoErr(err, "Failed to connect to Turso remote db")
+		return db
+	}
 
-	tursoURL := os.Getenv("TURSO_DATABASE_URL")
-	tursoToken := os.Getenv("TURSO_AUTH_TOKEN")
-
-	db, err := sql.Open("libsql", fmt.Sprintf("%s?authToken=%s", tursoURL, tursoToken))
-	asserts.NoErr(err, "Failed to connect to Turso remote db")
+	db, err := sql.Open("libsql", "file:./data.db")
+	asserts.NoErr(err, "Failed to open sqlite file")
 	return db
 }
