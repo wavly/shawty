@@ -16,13 +16,15 @@ func main() {
 	router := http.NewServeMux()
 
 	// Get the env variables and other config options
-	config.Init()
+	config.Init(router)
 
 	// Serving static files
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	// Route for index page
-	router.Handle("GET /", http.FileServer(http.Dir("./static/")))
+	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		w.Write(utils.StaticFile("./static/index.html"))
+	})
 
 	// Reading the URLS-SQL schema file
 	fileBytes, err := os.ReadFile("./schema/urls.sql")

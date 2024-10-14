@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"html/template"
 	"log"
 	"net/http"
 
@@ -28,7 +27,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templ := template.Must(template.ParseFiles("./templs/stat.html"))
+	templ := utils.Templ("./templs/stat.html")
 	db := utils.ConnectDB()
 	defer db.Close()
 	queries := database.New(db)
@@ -41,8 +40,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		notFoundTempl := template.Must(template.ParseFiles("./templs/404.html"))
-		w.WriteHeader(http.StatusNotFound)
+		notFoundTempl := utils.Templ("./templs/404.html")
 		notFoundTempl.Execute(w, nil)
 		return
 	}
@@ -50,10 +48,10 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	data := AccessCount{
 		Count:        shortLinkInfo.AccessedCount,
 		LastAccessed: timediff.TimeDiff(shortLinkInfo.LastAccessed.Time),
-		OriginalUrl: shortLinkInfo.OriginalUrl,
+		OriginalUrl:  shortLinkInfo.OriginalUrl,
 
 		ShortLink: ShortLink{
-			ShortUrl:    inputCode,
+			ShortUrl: inputCode,
 		},
 	}
 
