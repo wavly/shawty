@@ -16,7 +16,7 @@ func main() {
 	router := http.NewServeMux()
 
 	// Get the env variables and other config options
-	config.Init()
+	config.Init(router)
 
 	// Serving static files
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))

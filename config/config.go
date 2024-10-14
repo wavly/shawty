@@ -1,8 +1,11 @@
 package config
 
 import (
+	"log"
+	"net/http"
 	"os"
 
+	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/wavly/shawty/asserts"
 )
@@ -13,7 +16,12 @@ var ENV string
 var TURSO_TOKEN string
 var TURSO_URL string
 
-func Init() {
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
+func Init(router *http.ServeMux) {
 	err := godotenv.Load(".env.local")
 	asserts.NoErr(err, "Failed reading .env.local")
 
@@ -34,5 +42,23 @@ func Init() {
 		tursoURL := os.Getenv("TURSO_DATABASE_URL")
 		asserts.AssertEq(tursoURL == "", "Please provide the TURSO URL in .evn.local")
 		TURSO_URL = tursoURL
+		return
 	}
+
+	router.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Println("failed to start websocket connection:", err)
+			return
+		}
+		defer conn.Close()
+
+		for {
+			_, _, err := conn.ReadMessage()
+			if err != nil {
+				log.Println("Error reading message:", err)
+				break
+			}
+		}
+	})
 }
