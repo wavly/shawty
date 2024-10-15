@@ -37,11 +37,6 @@ func main() {
 	_, err = db.Exec(string(fileBytes))
 	asserts.NoErr(err, "Error creating the URLs table in the database")
 
-	// Ping/Pong route
-	router.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("pong\n"))
-	})
-
 	// Route for shortening the URL
 	router.HandleFunc("POST /", handlers.Main)
 
