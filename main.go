@@ -7,6 +7,7 @@ import (
 
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/config"
+	"github.com/wavly/shawty/env"
 	"github.com/wavly/shawty/handlers"
 	"github.com/wavly/shawty/utils"
 )
@@ -19,6 +20,7 @@ func main() {
 	config.Init(router)
 
 	// Serving static files
+	// TODO: make static content cache
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	// Route for index page
@@ -28,14 +30,13 @@ func main() {
 
 	// Reading the URLS-SQL schema file
 	fileBytes, err := os.ReadFile("./schema/urls.sql")
-	asserts.NoErr(err, "Failed to read URLS-SQL schema file")
+	asserts.NoErr(err, "Failed to read ./schema/urls.sql schema file")
 
 	db := utils.ConnectDB()
-	defer db.Close()
-
 	// Create the URLs table in the database
 	_, err = db.Exec(string(fileBytes))
-	asserts.NoErr(err, "Error creating the URLs table in the database")
+	db.Close()
+	asserts.NoErr(err, "Failed to creating the URLs table in the database")
 
 	// Route for shortening the URL
 	router.HandleFunc("POST /", handlers.Main)
@@ -49,6 +50,6 @@ func main() {
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
-	fmt.Println("Listening on:", config.PORT)
-	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+config.PORT, router), "Failed to start the server:")
+	fmt.Println("Listening on:", env.PORT)
+	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+env.PORT, router), "Failed to start the server")
 }
