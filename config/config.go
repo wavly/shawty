@@ -42,7 +42,7 @@ func Init(router *http.ServeMux) {
 		return
 	}
 
-	router.HandleFunc("GET /ws", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("GET /dev", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			logger.Error("failed to start websocket connection", "error", err)
