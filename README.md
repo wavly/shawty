@@ -13,9 +13,9 @@ package and [Tailwind](https://tailwindcss.com).
 - **URL Click Statistics**:
 Keep track of how many times each shortened URL is accessed.
 
-- **Caching**: Using [Memcached](http://memcached.org/) for faster redirections
-and fewer database calls, by caching the results of redirecting requests to the
-original URL.
+- **Caching**: Using [go-cache](https://github.com/patrickmn/go-cache) for
+faster redirections and fewer database calls, by caching the results of
+redirecting requests.
 
 - **Input Validation**:
 Checks if the URL is a valid URL schema. It only allows `https://` URLs. And
@@ -27,7 +27,6 @@ also checks if the URL contains a valid
 ### Prerequisites
 
 - Go (version 1.20 or higher) - [Download](https://go.dev/doc/install)
-- Memcached - [Download](http://memcached.org/)
 - Turso Account - [Website](https://turso.tech)
 
 ### Installation and Setup
@@ -39,17 +38,12 @@ also checks if the URL contains a valid
    ```
 2. **Set ENV Variables**:
    Get the database URL and Token: [Turso Docs](https://docs.turso.tech/sdk/go/quickstart)
-
    ```bash
    cp .env .env.local
    ```
 3. **Install the dependencies**:
    ```bash
    go mod tidy
-   ```
-4. **Start the `Memcached` listener**:
-   ```bash
-   memcached # default port is: 11211
    ```
 4. **Run the server**:
    ```bash
