@@ -1,17 +1,25 @@
 package asserts
 
-import "log"
+import (
+	"os"
 
-// logs the provided message and error, then exits if the error is not nil.
+	prettylogger "github.com/wavly/shawty/pretty-logger"
+)
+
+var logger = prettylogger.GetLogger(nil)
+
+// Exists if error is not nil
 func NoErr(err error, msg string) {
 	if err != nil {
-		log.Fatalln(msg, err)
+		logger.Error(msg, "error", err)
+		os.Exit(1)
 	}
 }
 
-// logs the message and exits if the boolean check is true
-func AssertEq(check bool, msg ...any) {
+// Exits if the check is true
+func AssertEq(check bool, msg string) {
 	if check {
-		log.Fatalln(msg...)
+		logger.Error(msg)
+		os.Exit(1)
 	}
 }
