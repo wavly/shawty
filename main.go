@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/config"
 	"github.com/wavly/shawty/env"
 	"github.com/wavly/shawty/handlers"
+	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
 )
 
@@ -28,15 +29,11 @@ func main() {
 		w.Write(utils.StaticFile("./static/index.html"))
 	})
 
-	// Reading the URLS-SQL schema file
-	fileBytes, err := os.ReadFile("./schema/urls.sql")
-	asserts.NoErr(err, "Failed to read ./schema/urls.sql schema file")
-
-	db := utils.ConnectDB()
 	// Create the URLs table in the database
-	_, err = db.Exec(string(fileBytes))
-	db.Close()
+	db := utils.ConnectDB()
+	err := database.New(db).CreateUrlTable(context.Background())
 	asserts.NoErr(err, "Failed to creating the URLs table in the database")
+	db.Close()
 
 	// Route for shortening the URL
 	router.HandleFunc("POST /", handlers.Main)
