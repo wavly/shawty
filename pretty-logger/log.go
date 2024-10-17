@@ -30,6 +30,7 @@ const (
 	lightMagenta = 95
 	lightCyan    = 96
 	white        = 97
+	brightWhite  = 98
 )
 
 type Handler struct {
@@ -69,10 +70,21 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 		level = colorize(lightRed, level)
 	}
 
+	attrs, err := h.computeAttrs(ctx, r)
+	if err != nil {
+		return err
+	}
+
+	bytes, err := json.MarshalIndent(attrs, "", "  ")
+	if err != nil {
+		return fmt.Errorf("error when marshaling attrs: %w", err)
+	}
+
 	fmt.Println(
-		colorize(lightGray, r.Time.Format(timeFormat)),
+		colorize(brightWhite, r.Time.Format(timeFormat)),
 		level,
 		colorize(white, r.Message),
+		colorize(lightGray, string(bytes)),
 	)
 
 	return nil
