@@ -1,5 +1,5 @@
 (() => {
-  const socketUrl = 'ws://localhost:1920/ws';
+  const socketUrl = 'ws://localhost:{{ . }}/dev';
 
   let socket = new WebSocket(socketUrl);
 

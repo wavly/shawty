@@ -1,41 +1,47 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
-	"os"
+	"time"
 
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/config"
+	"github.com/wavly/shawty/env"
 	"github.com/wavly/shawty/handlers"
+	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
 )
 
 func main() {
-	// Creating the ServerMux router
 	router := http.NewServeMux()
 
 	// Get the env variables and other config options
 	config.Init(router)
 
-	// Serving static files
-	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	// Create the URLs table in the database
+	db := utils.ConnectDB()
+	err := database.New(db).CreateUrlTable(context.Background())
+	asserts.NoErr(err, "Failed to creating the URLs table in the database")
+	db.Close()
+
+	// Serving static files with caching
+	router.Handle("GET /static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set Cache-Control headers for 10 days
+		w.Header().Set("Cache-Control", "public, max-age=864000")
+
+		// Set Last-Modified header
+		w.Header().Set("Last-Modified", time.Now().UTC().Format(http.TimeFormat))
+
+		// Serve the static content
+		http.FileServer(http.Dir("./static")).ServeHTTP(w, r)
+	})))
 
 	// Route for index page
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		w.Write(utils.StaticFile("./static/index.html"))
 	})
-
-	// Reading the URLS-SQL schema file
-	fileBytes, err := os.ReadFile("./schema/urls.sql")
-	asserts.NoErr(err, "Failed to read URLS-SQL schema file")
-
-	db := utils.ConnectDB()
-	defer db.Close()
-
-	// Create the URLs table in the database
-	_, err = db.Exec(string(fileBytes))
-	asserts.NoErr(err, "Error creating the URLs table in the database")
 
 	// Route for shortening the URL
 	router.HandleFunc("POST /", handlers.Main)
@@ -49,6 +55,6 @@ func main() {
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
-	fmt.Println("Listening on:", config.PORT)
-	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+config.PORT, router), "Failed to start the server:")
+	fmt.Printf("Listening on: %s\n\n", env.PORT)
+	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+env.PORT, router), "Failed to start the server")
 }

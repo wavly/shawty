@@ -3,15 +3,19 @@ package handlers
 import (
 	"database/sql"
 	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/patrickmn/go-cache"
 	. "github.com/wavly/shawty/cache"
 	"github.com/wavly/shawty/internal/database"
+	prettylogger "github.com/wavly/shawty/pretty-logger"
 	"github.com/wavly/shawty/utils"
 	"github.com/wavly/shawty/validate"
 )
+
+var logger = slog.New(prettylogger.NewHandler(nil))
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
@@ -54,7 +58,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		log.Println("Failed to update accessed_count and last_accessed:", err)
+		logger.Error("Failed to update accessed_count and last_accessed", "error", err)
 		return
 	}
 }
