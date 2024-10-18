@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/config"
@@ -14,26 +15,33 @@ import (
 )
 
 func main() {
-	// Creating the ServerMux router
 	router := http.NewServeMux()
 
 	// Get the env variables and other config options
 	config.Init(router)
-
-	// Serving static files
-	// TODO: make static content cache
-	router.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
-
-	// Route for index page
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write(utils.StaticFile("./static/index.html"))
-	})
 
 	// Create the URLs table in the database
 	db := utils.ConnectDB()
 	err := database.New(db).CreateUrlTable(context.Background())
 	asserts.NoErr(err, "Failed to creating the URLs table in the database")
 	db.Close()
+
+	// Serving static files with caching
+	router.Handle("GET /static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Set Cache-Control headers for 10 days
+		w.Header().Set("Cache-Control", "public, max-age=864000")
+
+		// Set Last-Modified header
+		w.Header().Set("Last-Modified", time.Now().UTC().Format(http.TimeFormat))
+
+		// Serve the static content
+		http.FileServer(http.Dir("./static")).ServeHTTP(w, r)
+	})))
+
+	// Route for index page
+	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		w.Write(utils.StaticFile("./static/index.html"))
+	})
 
 	// Route for shortening the URL
 	router.HandleFunc("POST /", handlers.Main)
@@ -47,6 +55,6 @@ func main() {
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
-	fmt.Println("Listening on:", env.PORT)
+	fmt.Printf("Listening on: %s\n\n", env.PORT)
 	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+env.PORT, router), "Failed to start the server")
 }
