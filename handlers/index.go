@@ -10,17 +10,28 @@ import (
 	"strings"
 
 	"github.com/wavly/shawty/internal/database"
+	prettylogger "github.com/wavly/shawty/pretty-logger"
 	"github.com/wavly/shawty/utils"
 	"github.com/wavly/shawty/validate"
 )
 
+var Logger = prettylogger.GetLogger(nil)
+
 func Main(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		Logger.Warn("POST request to unknown route", "route", r.URL.Path, "user-agent", r.UserAgent())
+		w.Write([]byte("Not found"))
+		return
+	}
 	inputUrl := r.FormValue("url")
 	customCode := r.FormValue("code")
+
+	Logger.Info("POST / request", "input-url", inputUrl, "input-code", customCode, "user-agent", r.UserAgent())
 
 	// Validate customCode
 	err := validate.CustomCodeValidate(customCode)
 	if err != nil {
+		Logger.Warn("Code validation failed", "code", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
@@ -34,6 +45,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	// Validate the URL
 	err = validate.ValidateUrl(inputUrl)
 	if err != nil {
+		Logger.Warn("URL validation failed", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return

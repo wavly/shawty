@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	"github.com/mergestat/timediff"
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
+	"github.com/wavly/shawty/validate"
 )
 
 type AccessCount struct {
@@ -22,7 +22,9 @@ type AccessCount struct {
 func Stats(w http.ResponseWriter, r *http.Request) {
 	inputCode := r.PathValue("code")
 
-	if len(inputCode) > 8 {
+	err := validate.CustomCodeValidate(inputCode)
+	if err != nil {
+		Logger.Warn("failed to validate the input code", "code", inputCode, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent(), "error", err)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -35,11 +37,12 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	shortLinkInfo, err := queries.GetShortCodeInfo(r.Context(), inputCode)
 	if err != nil {
 		if err != sql.ErrNoRows {
+			Logger.Error("failed to query to get the short url info", "code", inputCode, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent(), "error", err)
 			utils.ServerErrTempl(w, "An error occur when querying the database")
-			log.Printf("Database error when selecting accessed_count and original_url where code = %s, Error %s\n", inputCode, err)
 			return
 		}
 
+		Logger.Warn("Stats not found", "code", inputCode, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 		notFoundTempl := utils.Templ("./templs/404.html")
 		notFoundTempl.Execute(w, nil)
 		return

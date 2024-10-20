@@ -2,20 +2,15 @@ package handlers
 
 import (
 	"database/sql"
-	"log"
-	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/patrickmn/go-cache"
 	. "github.com/wavly/shawty/cache"
 	"github.com/wavly/shawty/internal/database"
-	prettylogger "github.com/wavly/shawty/pretty-logger"
 	"github.com/wavly/shawty/utils"
 	"github.com/wavly/shawty/validate"
 )
-
-var logger = slog.New(prettylogger.NewHandler(nil))
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
@@ -23,6 +18,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Validate the code
 	err := validate.CustomCodeValidate(code)
 	if err != nil {
+		Logger.Warn("Code validation failed", "code", code, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 		http.Redirect(w, r, "/", http.StatusBadRequest)
 		return
 	}
@@ -36,10 +32,11 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 
 	// Update the cache if the doesn't exist
 	if !found {
+		Logger.Info("Cache Miss, redirect code not found", "code", code, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 		originalUrl, err := queries.GetOriginalUrl(r.Context(), code)
 		if err != nil {
 			utils.ServerErrTempl(w, "Sorry, an unexpected error occur when querying the database for the URL")
-			log.Println("Error: when querying the database for the URL", err)
+			Logger.Error("failed to query the database for the original URL", "error", err)
 			return
 		}
 
@@ -48,6 +45,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	Logger.Info("Cache hit, redirect code found", "code", code, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 	http.Redirect(w, r, originalUrl.(string), http.StatusSeeOther)
 
 	// Todo: update last-time/access count in cache
@@ -58,7 +56,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		logger.Error("Failed to update accessed_count and last_accessed", "error", err)
+		Logger.Error("failed to update accessed_count and last_accessed", "error", err)
 		return
 	}
 }
