@@ -64,5 +64,12 @@ func main() {
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
 	fmt.Printf("Listening on: %s\n\n", env.PORT)
-	asserts.NoErr(http.ListenAndServe("0.0.0.0:"+env.PORT, router), "Failed to start the server")
+	server := &http.Server{
+		Addr:         ":" + env.PORT,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  15 * time.Second,
+	}
+	asserts.NoErr(server.ListenAndServe(), "Failed to start the server")
 }
