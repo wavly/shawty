@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"html/template"
-	"log"
 	"net/http"
 	"strings"
 
@@ -21,6 +20,7 @@ type ShortLink struct {
 
 func Shawty(w http.ResponseWriter, r *http.Request) {
 	inputUrl := r.FormValue("url")
+	Logger.Info("Shorten the URL", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 
 	// Check if longUrl contains "://" and add "https://" if missing
 	if !strings.Contains(inputUrl, "://") {
@@ -30,6 +30,7 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	// Validate the URL
 	err := validate.ValidateUrl(inputUrl)
 	if err != nil {
+		Logger.Warn("failed to validate URL", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent(), "error", err)
 		errorTempl := template.Must(template.ParseFiles("./partial-html/short-link-error.html"))
 		asserts.NoErr(errorTempl.Execute(w, err), "Failed to execute template short-link-error.html")
 		return
@@ -51,11 +52,12 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	// Check if the url exists in the database
 	code, err := queries.GetCode(r.Context(), hashUrl)
 	if err != nil {
+		Logger.Info("URL doesn't exists in the database", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 		// Check if err doesn't equal to `sql.ErrNoRows`
 		// And if true then log the error and return
 		if err != sql.ErrNoRows {
+			Logger.Error("failed to query the code for the URL", "error", err, "code", hashUrl, "input-url", inputUrl, "user-agent", r.UserAgent())
 			utils.ServerErrTempl(w, "An error occur when querying the database")
-			log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", hashUrl, err)
 			return
 		}
 
@@ -65,8 +67,8 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 			Code:        hashUrl,
 		})
 		if err != nil {
+			Logger.Error("failed to query to create short link", "original_url", inputUrl, "code", hashUrl, "error", err)
 			utils.ServerErrTempl(w, "An error occur when saving the URL to the database")
-			log.Println("Failed to store URL in the database", err)
 			return
 		}
 
@@ -78,6 +80,7 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	Logger.Info("URL exists in the database", "url", inputUrl, "code", hashUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
 	w.WriteHeader(http.StatusCreated)
 	data := ShortLink{
 		ShortUrl:    code,

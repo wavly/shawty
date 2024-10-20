@@ -11,11 +11,13 @@ import (
 	"github.com/wavly/shawty/env"
 	"github.com/wavly/shawty/handlers"
 	"github.com/wavly/shawty/internal/database"
+	prettylogger "github.com/wavly/shawty/pretty-logger"
 	"github.com/wavly/shawty/utils"
 )
 
 func main() {
 	router := http.NewServeMux()
+	logger := prettylogger.GetLogger(nil)
 
 	// Get the env variables and other config options
 	config.Init(router)
@@ -36,10 +38,16 @@ func main() {
 
 		// Serve the static content
 		http.FileServer(http.Dir("./static")).ServeHTTP(w, r)
+		logger.Debug("Request for static content", "resource", r.URL.Path, "from-ip", r.RemoteAddr)
 	})))
 
 	// Route for index page
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			logger.Warn("Page not found", "route", r.URL.Path, "user-agent", r.UserAgent())
+			utils.Templ("./templs/404.html").Execute(w, nil)
+			return
+		}
 		w.Write(utils.StaticFile("./static/index.html"))
 	})
 
