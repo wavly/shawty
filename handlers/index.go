@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -28,24 +27,15 @@ func Main(w http.ResponseWriter, r *http.Request) {
 
 	Logger.Info("POST request /", "input-url", inputUrl, "input-code", customCode, "user-agent", r.UserAgent())
 
-	// Validate customCode
-	err := validate.CustomCodeValidate(customCode)
-	if err != nil {
-		Logger.Warn("Code validation failed", "code", inputUrl, "user-agent", r.UserAgent(), "error", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
 	// Check if inputUrl contains "://" and add "https://" if missing
 	if !strings.Contains(inputUrl, "://") {
 		inputUrl = "https://" + inputUrl
 	}
 
 	// Validate the URL
-	err = validate.ValidateUrl(inputUrl)
+	err := validate.ValidateUrl(inputUrl)
 	if err != nil {
-		Logger.Warn("URL validation failed", "url", inputUrl, "user-agent", r.UserAgent())
+		Logger.Warn("URL validation failed", "url", inputUrl, "user-agent", r.UserAgent(), "error", err, "input-url", inputUrl)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
@@ -56,14 +46,23 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	queries := database.New(db)
 
 	if customCode != "" {
+		// Validate customCode
+		err := validate.CustomCodeValidate(customCode)
+		if err != nil {
+			Logger.Warn("Code validation failed", "code", inputUrl, "user-agent", r.UserAgent(), "error", err)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 		// Check if the url exists in the database
-		_, err := queries.GetCode(r.Context(), customCode)
+		_, err = queries.GetCode(r.Context(), customCode)
 		if err != nil {
 			// Check if err doesn't equal to `sql.ErrNoRows`
 			// And if true then log the error and return
 			if err != sql.ErrNoRows {
 				w.Write([]byte("An unexpected error occur when querying from the database"))
-				log.Printf("Database error when selecting code where code = %s, Error: %s\n", customCode, err)
+				Logger.Error("failed to query database to get the code", "error", err, "input-code", customCode)
 				return
 			}
 
@@ -74,7 +73,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 			})
 			if err != nil {
 				w.Write([]byte("An unexpected error occur when saving the URL to the database"))
-				log.Println("Failed to store URL in the database", err)
+				Logger.Error("failed to query database to store original url", "error", err, "original-url", inputUrl, "input-code", customCode)
 				return
 			}
 
@@ -103,7 +102,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		// And if true then log the error and return
 		if err != sql.ErrNoRows {
 			w.Write([]byte("An unexpected error occur when querying from the database"))
-			log.Printf("Database error when selecting original_url where code = %s, Error: %s\n", hashUrl, err)
+			Logger.Error("failed to query database to get the url code", "error", err, "input-code", customCode)
 			return
 		}
 
@@ -115,7 +114,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			w.Write([]byte("An unexpected error occur when saving the URL to the database"))
-			log.Println("Failed to store URL in the database", err)
+			Logger.Error("failed to query to create the short url", "error", err, "original-url", inputUrl, "code", hashUrl)
 			return
 		}
 
