@@ -18,7 +18,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Validate the code
 	err := validate.CustomCodeValidate(code)
 	if err != nil {
-		Logger.Warn("Code validation failed", "code", code, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+		Logger.Warn("Code validation failed", "code", code, "user-agent", r.UserAgent())
 		http.Redirect(w, r, "/", http.StatusBadRequest)
 		return
 	}
@@ -32,7 +32,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 
 	// Update the cache if the doesn't exist
 	if !found {
-		Logger.Info("Cache Miss, redirect code not found", "code", code, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+		Logger.Info("Cache Miss, redirect code not found", "code", code, "user-agent", r.UserAgent())
 		originalUrl, err := queries.GetOriginalUrl(r.Context(), code)
 		if err != nil {
 			utils.ServerErrTempl(w, "Sorry, an unexpected error occur when querying the database for the URL")
@@ -45,7 +45,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Logger.Info("Cache hit, redirect code found", "code", code, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+	Logger.Info("Cache hit, redirect code found", "code", code, "user-agent", r.UserAgent())
 	http.Redirect(w, r, originalUrl.(string), http.StatusSeeOther)
 
 	// Todo: update last-time/access count in cache

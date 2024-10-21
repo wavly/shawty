@@ -38,7 +38,7 @@ func main() {
 
 		// Serve the static content
 		http.FileServer(http.Dir("./static")).ServeHTTP(w, r)
-		logger.Debug("Request for static content", "resource", r.URL.Path, "from-ip", r.RemoteAddr)
+		logger.Debug("Request for static content", "resource", r.URL.Path, "user-agent", r.UserAgent())
 	})))
 
 	// Route for index page

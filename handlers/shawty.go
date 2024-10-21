@@ -15,12 +15,12 @@ import (
 )
 
 type ShortLink struct {
-	ShortUrl    string
+	ShortUrl string
 }
 
 func Shawty(w http.ResponseWriter, r *http.Request) {
 	inputUrl := r.FormValue("url")
-	Logger.Info("Shorten the URL", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+	Logger.Info("Shorten the URL", "url", inputUrl, "user-agent", r.UserAgent())
 
 	// Check if longUrl contains "://" and add "https://" if missing
 	if !strings.Contains(inputUrl, "://") {
@@ -30,7 +30,7 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	// Validate the URL
 	err := validate.ValidateUrl(inputUrl)
 	if err != nil {
-		Logger.Warn("failed to validate URL", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent(), "error", err)
+		Logger.Warn("failed to validate URL", "url", inputUrl, "user-agent", r.UserAgent(), "error", err)
 		errorTempl := template.Must(template.ParseFiles("./partial-html/short-link-error.html"))
 		asserts.NoErr(errorTempl.Execute(w, err), "Failed to execute template short-link-error.html")
 		return
@@ -52,7 +52,7 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	// Check if the url exists in the database
 	code, err := queries.GetCode(r.Context(), hashUrl)
 	if err != nil {
-		Logger.Info("URL doesn't exists in the database", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+		Logger.Info("URL doesn't exists in the database", "url", inputUrl, "user-agent", r.UserAgent())
 		// Check if err doesn't equal to `sql.ErrNoRows`
 		// And if true then log the error and return
 		if err != sql.ErrNoRows {
@@ -74,16 +74,16 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 		data := ShortLink{
-			ShortUrl:    hashUrl,
+			ShortUrl: hashUrl,
 		}
 		asserts.NoErr(templ.Execute(w, data), "Failed to execute template short-link.html")
 		return
 	}
 
-	Logger.Info("URL exists in the database", "url", inputUrl, "code", hashUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+	Logger.Info("URL exists in the database", "url", inputUrl, "code", hashUrl, "user-agent", r.UserAgent())
 	w.WriteHeader(http.StatusCreated)
 	data := ShortLink{
-		ShortUrl:    code,
+		ShortUrl: code,
 	}
 	asserts.NoErr(templ.Execute(w, data), "Failed to execute template short-link.html")
 }

@@ -26,12 +26,12 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	inputUrl := r.FormValue("url")
 	customCode := r.FormValue("code")
 
-	Logger.Info("POST / request", "input-url", inputUrl, "input-code", customCode, "user-agent", r.UserAgent())
+	Logger.Info("POST request /", "input-url", inputUrl, "input-code", customCode, "user-agent", r.UserAgent())
 
 	// Validate customCode
 	err := validate.CustomCodeValidate(customCode)
 	if err != nil {
-		Logger.Warn("Code validation failed", "code", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+		Logger.Warn("Code validation failed", "code", inputUrl, "user-agent", r.UserAgent(), "error", err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
@@ -45,7 +45,7 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	// Validate the URL
 	err = validate.ValidateUrl(inputUrl)
 	if err != nil {
-		Logger.Warn("URL validation failed", "url", inputUrl, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+		Logger.Warn("URL validation failed", "url", inputUrl, "user-agent", r.UserAgent())
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return

@@ -24,7 +24,7 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 
 	err := validate.CustomCodeValidate(inputCode)
 	if err != nil {
-		Logger.Warn("failed to validate the input code", "code", inputCode, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent(), "error", err)
+		Logger.Warn("failed to validate the input code", "code", inputCode, "user-agent", r.UserAgent(), "error", err)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -37,12 +37,12 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	shortLinkInfo, err := queries.GetShortCodeInfo(r.Context(), inputCode)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			Logger.Error("failed to query to get the short url info", "code", inputCode, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent(), "error", err)
+			Logger.Error("failed to query to get the short url info", "code", inputCode, "user-agent", r.UserAgent(), "error", err)
 			utils.ServerErrTempl(w, "An error occur when querying the database")
 			return
 		}
 
-		Logger.Warn("Stats not found", "code", inputCode, "from-ip", r.RemoteAddr, "user-agent", r.UserAgent())
+		Logger.Warn("Stats not found", "code", inputCode, "user-agent", r.UserAgent())
 		notFoundTempl := utils.Templ("./templs/404.html")
 		notFoundTempl.Execute(w, nil)
 		return
