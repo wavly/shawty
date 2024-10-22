@@ -38,13 +38,14 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err != sql.ErrNoRows {
 			Logger.Error("failed to query to get the short url info", "code", inputCode, "user-agent", r.UserAgent(), "error", err)
+			w.WriteHeader(http.StatusInternalServerError)
 			utils.ServerErrTempl(w, "An error occur when querying the database")
 			return
 		}
 
 		Logger.Warn("Stats not found", "code", inputCode, "user-agent", r.UserAgent())
-		notFoundTempl := utils.Templ("./templs/404.html")
-		notFoundTempl.Execute(w, nil)
+		w.WriteHeader(http.StatusNotFound)
+		asserts.NoErr(utils.Templ("./templs/404.html").Execute(w, nil), "Failed to execute 404 template in stats page")
 		return
 	}
 
