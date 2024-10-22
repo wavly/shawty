@@ -45,6 +45,10 @@ func main() {
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			logger.Warn("Page not found", "route", r.URL.Path, "user-agent", r.UserAgent())
+
+			// NOTE: HTMX doesn't swap the elements if the returned status code isn't successful, e.g 4xx, 5xx
+			// This is fine "here" because it isn't using the hx-trigger attribute to swap the elements
+			w.WriteHeader(http.StatusNotFound)
 			utils.Templ("./templs/404.html").Execute(w, nil)
 			return
 		}
