@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/patrickmn/go-cache"
+	"github.com/wavly/shawty/asserts"
 	. "github.com/wavly/shawty/cache"
 	"github.com/wavly/shawty/internal/database"
 	"github.com/wavly/shawty/utils"
@@ -32,14 +33,22 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 
 	// Update the cache if the doesn't exist
 	if !found {
-		Logger.Info("Cache Miss, redirect code not found", "code", code, "user-agent", r.UserAgent())
 		originalUrl, err := queries.GetOriginalUrl(r.Context(), code)
 		if err != nil {
-			utils.ServerErrTempl(w, "Sorry, an unexpected error occur when querying the database for the URL")
-			Logger.Error("failed to query the database for the original URL", "error", err)
+			if err != sql.ErrNoRows {
+				w.WriteHeader(http.StatusInternalServerError)
+				utils.ServerErrTempl(w, "Sorry, an unexpected error occur when querying the database for the URL")
+				Logger.Error("failed to query the database for the original URL", "error", err)
+				return
+			}
+
+			Logger.Warn("Redirect code not found", "code", code, "user-agent", r.UserAgent())
+			w.WriteHeader(http.StatusNotFound)
+			asserts.NoErr(utils.Templ("./templs/404.html").Execute(w, nil), "Failed to execute 404 template in redirect route")
 			return
 		}
 
+		Logger.Info("Cache Miss, redirect code not found", "code", code, "user-agent", r.UserAgent())
 		http.Redirect(w, r, originalUrl, http.StatusSeeOther)
 		Cache.Set(code, originalUrl, cache.DefaultExpiration)
 		return
@@ -54,7 +63,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		Code:         code,
 		LastAccessed: sql.NullTime{Time: time.Now().UTC(), Valid: true},
 	})
-
 	if err != nil {
 		Logger.Error("failed to update accessed_count and last_accessed", "error", err)
 		return
