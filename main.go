@@ -13,6 +13,7 @@ import (
 	"github.com/wavly/shawty/internal/database"
 	prettylogger "github.com/wavly/shawty/pretty-logger"
 	"github.com/wavly/shawty/utils"
+	"github.com/wavly/shawty/validate"
 )
 
 func main() {
@@ -21,6 +22,8 @@ func main() {
 
 	// Get the env variables and other config options
 	config.Init()
+
+	go validate.EvictOldLinks(2)
 
 	// Create the URLs table in the database
 	db := utils.ConnectDB()

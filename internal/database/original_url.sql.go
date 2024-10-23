@@ -37,6 +37,16 @@ func (q *Queries) CreateShortLink(ctx context.Context, arg CreateShortLinkParams
 	return i, err
 }
 
+const deleteLinkTime = `-- name: DeleteLinkTime :exec
+DELETE FROM urls
+  WHERE last_accessed = ?
+`
+
+func (q *Queries) DeleteLinkTime(ctx context.Context, lastAccessed sql.NullTime) error {
+	_, err := q.db.ExecContext(ctx, deleteLinkTime, lastAccessed)
+	return err
+}
+
 const getCode = `-- name: GetCode :one
 SELECT code FROM urls WHERE code = ?
 `
@@ -45,6 +55,38 @@ func (q *Queries) GetCode(ctx context.Context, code string) (string, error) {
 	row := q.db.QueryRowContext(ctx, getCode, code)
 	err := row.Scan(&code)
 	return code, err
+}
+
+const getLastAccessedTime = `-- name: GetLastAccessedTime :many
+SELECT last_accessed, original_url FROM urls
+`
+
+type GetLastAccessedTimeRow struct {
+	LastAccessed sql.NullTime
+	OriginalUrl  string
+}
+
+func (q *Queries) GetLastAccessedTime(ctx context.Context) ([]GetLastAccessedTimeRow, error) {
+	rows, err := q.db.QueryContext(ctx, getLastAccessedTime)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetLastAccessedTimeRow
+	for rows.Next() {
+		var i GetLastAccessedTimeRow
+		if err := rows.Scan(&i.LastAccessed, &i.OriginalUrl); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getOriginalUrl = `-- name: GetOriginalUrl :one
