@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="title" content="Shawty - Tool for shortening long URLs" />
+    <meta
+      name="description"
+      content="Shawty is a tool for shortening long URLs making it easy to share them"
+    />
+    <script
+      src="https://unpkg.com/htmx.org@2.0.2"
+      integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
+      crossorigin="anonymous"
+    ></script>
+    <title>Shawty</title>
+    <link rel="stylesheet" href="/static/dist.css" />
+    <style>
+      a {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body class="bg-[#090909] text-[#ada9a9] min-h-screen flex flex-col items-center px-4 sm:px-6 lg:px-8">
+    <main class="w-full max-w-4xl mx-auto mt-8">
+      <h1 class="text-4xl sm:text-5xl text-center text-white font-bold">
+        Shawty
+      </h1>
+      <p class="text-center text-lg mb-10">
+        Shawty is a free and
+        <a class="underline" target="_blank" href="https://github.com/wavly/shawty">open-source</a> tool for
+        shortening long URLs
+      </p>
+
+      <div class="w-full max-w-4xl flex flex-col mx-auto">
+        <h2 class="text-2xl sm:text-3xl font-bold font-mono">Unshorten URL</h2>
+        <p class="text-base sm:text-lg">Enter the short URL to check the destination page.</p>
+        <form class="py-6 px-4 sm:px-7 my-4 flex items-center justify-center rounded-md bg-[#1f1f1f] w-full" hx-post="/unshort"
+          hx-target="#return">
+          <input
+            class="px-4 py-3 rounded-md bg-slate-700 text-slate-400 placeholder-slate-400 w-full h-full sm:w-96"
+            required name="url" type="text" placeholder="Enter here your shortened URL">
+          <button
+            class="px-4 py-3 text-lg font-bold bg-black sm:rounded-l-none text-slate-300 active:bg-blue-800 w-full sm:w-auto"
+            type="submit">Check</button>
+          <span id="return" class="block"></span>
+        </form>
+        <p class="font-mono">- URL unshortener shows the original URL that a short URL will redirect to.</p>
+      </div>
+    </main>
+  </body>
+</html>

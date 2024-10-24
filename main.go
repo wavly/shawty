@@ -64,6 +64,11 @@ func main() {
 	// Route to handle redirection
 	router.HandleFunc("GET /s/{code}", handlers.Redirect)
 
+	// Route for unshortening the URL
+	router.HandleFunc("GET /unshort", func(w http.ResponseWriter, r *http.Request) {
+		w.Write(utils.StaticFile("./static/unshort.html"))
+	})
+
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
