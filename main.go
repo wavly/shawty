@@ -72,6 +72,9 @@ func main() {
 	// API route for shortening the URL
 	router.HandleFunc("POST /shawty", handlers.Shawty)
 
+	// API route for unshortening the URL
+	router.HandleFunc("POST /unshort", handlers.Unshort)
+
 	fmt.Printf("Listening on: %s\n\n", env.PORT)
 	server := &http.Server{
 		Addr:         ":" + env.PORT,
