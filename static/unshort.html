@@ -35,14 +35,16 @@
       <div class="w-full max-w-4xl flex flex-col mx-auto">
         <h2 class="text-2xl sm:text-3xl font-bold font-mono">Unshorten URL</h2>
         <p class="text-base sm:text-lg">Enter the short URL to check the destination page.</p>
-        <form class="py-6 px-4 sm:px-7 my-4 flex items-center justify-center rounded-md bg-[#1f1f1f] w-full" hx-post="/unshort"
+        <form class="py-6 px-4 sm:px-7 my-4 flex flex-col items-center justify-center rounded-md bg-[#1f1f1f] w-full" hx-post="/unshort"
           hx-target="#return">
-          <input
-            class="px-4 py-3 rounded-md bg-slate-700 text-slate-400 placeholder-slate-400 w-full h-full sm:w-96"
-            required name="url" type="text" placeholder="Enter here your shortened URL">
-          <button
-            class="px-4 py-3 text-lg font-bold bg-black sm:rounded-l-none text-slate-300 active:bg-blue-800 w-full sm:w-auto"
-            type="submit">Check</button>
+          <div class="flex">
+            <input
+              class="px-4 py-3 rounded-md bg-slate-700 text-slate-400 placeholder-slate-400 w-full h-full sm:w-96"
+              required name="code" type="text" placeholder="Enter the code here">
+            <button
+              class="px-4 py-3 text-lg font-bold bg-black sm:rounded-l-none text-slate-300 active:bg-blue-800 w-full sm:w-auto"
+              type="submit">Check</button>
+          </div>
           <span id="return" class="block"></span>
         </form>
         <p class="font-mono">- URL unshortener shows the original URL that a short URL will redirect to.</p>
