@@ -29,11 +29,11 @@ func (_ *InvalidDomainFormat) Error() string {
 }
 
 func (link *UrlTooLong) Error() string {
-	return fmt.Sprintf("URL is too long, max lenght is 1000 characters, but got %v", link.url)
+	return fmt.Sprintf("URL is too long, max length is 1000 characters, but got %v", link.url)
 }
 
 func (link *UrlTooShort) Error() string {
-	return "URL is too short, min lenght is 4 characters"
+	return "URL is too short, min length is 4 characters"
 }
 
 func (_ *InvalidDomainName) Error() string {

@@ -7,11 +7,11 @@ import (
 )
 
 type TooLong struct {
-	lenght uint
+	length uint
 }
 
 type TooShort struct {
-	lenght uint
+	length uint
 }
 
 type NotAlphaOrNum struct {
@@ -19,11 +19,11 @@ type NotAlphaOrNum struct {
 }
 
 func (code *TooLong) Error() string {
-	return fmt.Sprintf("Max lenght of the code is 8, but got %v", code.lenght)
+	return fmt.Sprintf("Max length of the code is 8, but got %v", code.length)
 }
 
 func (_ *TooShort) Error() string {
-	return "Min lenght of the code is 2"
+	return "Min length of the code is 2"
 }
 
 func (code *NotAlphaOrNum) Error() string {
@@ -32,7 +32,7 @@ func (code *NotAlphaOrNum) Error() string {
 
 func CustomCodeValidate(code string) error {
 	if len(code) > 8 {
-		return &TooLong{lenght: uint(len(code))}
+		return &TooLong{length: uint(len(code))}
 	} else if len(code) < 2 {
 		return &TooShort{}
 	}
