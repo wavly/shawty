@@ -55,9 +55,6 @@ func main() {
 		w.Write(utils.StaticFile("./static/index.html"))
 	})
 
-	// Route for shortening the URL
-	router.HandleFunc("POST /", handlers.Main)
-
 	// Route for stats page
 	router.HandleFunc("GET /stat/{code}", handlers.Stats)
 
