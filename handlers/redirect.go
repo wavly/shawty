@@ -9,9 +9,12 @@ import (
 	"github.com/wavly/shawty/asserts"
 	. "github.com/wavly/shawty/cache"
 	"github.com/wavly/shawty/internal/database"
+	prettylogger "github.com/wavly/shawty/pretty-logger"
 	"github.com/wavly/shawty/utils"
 	"github.com/wavly/shawty/validate"
 )
+
+var Logger = prettylogger.GetLogger(nil)
 
 func Redirect(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
@@ -19,8 +22,8 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Validate the code
 	err := validate.CustomCodeValidate(code)
 	if err != nil {
-		Logger.Warn("Code validation failed", "code", code, "user-agent", r.UserAgent())
-		http.Redirect(w, r, "/", http.StatusBadRequest)
+		Logger.Warn("Code validation failed", "code", code, "user-agent", r.UserAgent(), "error", err)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
