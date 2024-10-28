@@ -35,6 +35,7 @@ fn accept_conns(stream: TcpStream) {
           if websocket.send("file changed".into()).is_err() {
             break;
           }
+          let _ = websocket.read();
         }
       }
       Err(err) => eprintln!("Erorr receiving events: {err}"),
