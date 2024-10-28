@@ -1,0 +1,8 @@
+[package]
+name = "live-reload"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+notify = "7.0.0"
+tungstenite = "0.24.0"
