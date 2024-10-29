@@ -1,24 +1,17 @@
 package config
 
 import (
-	"net/http"
 	"os"
 
-	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/wavly/shawty/asserts"
 	. "github.com/wavly/shawty/env"
 	prettylogger "github.com/wavly/shawty/pretty-logger"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
 var logger = prettylogger.GetLogger(nil)
 
-func Init(router *http.ServeMux) {
+func Init() {
 	err := godotenv.Load(".env.local")
 	asserts.NoErr(err, "Failed reading .env.local")
 
@@ -41,21 +34,4 @@ func Init(router *http.ServeMux) {
 		TURSO_URL = tursoURL
 		return
 	}
-
-	router.HandleFunc("GET /dev", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			logger.Error("failed to start websocket connection", "error", err)
-			return
-		}
-		defer conn.Close()
-
-		for {
-			_, _, err := conn.ReadMessage()
-			if err != nil {
-				logger.Error("Error reading message:", "error", err)
-				break
-			}
-		}
-	})
 }

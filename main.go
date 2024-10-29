@@ -20,7 +20,7 @@ func main() {
 	logger := prettylogger.GetLogger(nil)
 
 	// Get the env variables and other config options
-	config.Init(router)
+	config.Init()
 
 	// Create the URLs table in the database
 	db := utils.ConnectDB()
