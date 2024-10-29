@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"html/template"
 	"net/http"
-	"strings"
 
 	"github.com/wavly/shawty/asserts"
 	"github.com/wavly/shawty/internal/database"
@@ -22,10 +21,6 @@ func Shawty(w http.ResponseWriter, r *http.Request) {
 	inputUrl := r.FormValue("url")
 	Logger.Info("Shorten the URL", "url", inputUrl, "user-agent", r.UserAgent())
 
-	// Check if longUrl contains "://" and add "https://" if missing
-	if !strings.Contains(inputUrl, "://") {
-		inputUrl = "https://" + inputUrl
-	}
 
 	// Validate the URL
 	err := validate.ValidateUrl(inputUrl)

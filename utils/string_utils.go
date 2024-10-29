@@ -20,7 +20,7 @@ func IsASCII(text string) bool {
 
 func IsAlphabetOrNum(text string) bool {
 	for _, c := range text {
-		if !isValidChar(c) {
+		if !IsValidChar(c) {
 			return false
 		}
 	}
@@ -28,7 +28,7 @@ func IsAlphabetOrNum(text string) bool {
 	return true
 }
 
-func isValidChar(c rune) bool {
+func IsValidChar(c rune) bool {
 	return c >= 'a' && c <= 'z' ||
 		c >= 'A' && c <= 'Z' ||
 		c >= '0' && c <= '9'
