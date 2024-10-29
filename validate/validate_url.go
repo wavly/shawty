@@ -53,38 +53,46 @@ func (*DomainTooLong) Error() string {
 func (link *InvalidUrlPath) Error() string {
 	return fmt.Sprintf("URL path contains invalid characters: %s", link.path)
 }
-func ValidateUrl(link string) error {
+
+func ValidateUrl(link string) (string, error) {
 	parsedUrl, err := url.Parse(link)
 	if err != nil {
-		return err
+		return link, err
 	}
 
-	if parsedUrl.Scheme != "" && parsedUrl.Scheme != "https" {
-		return &InvalidUrlSchema{schema: parsedUrl.Scheme}
+	// Check if the scheme is empty, if so default to https
+	if parsedUrl.Scheme == "" {
+		link = "https://" + link
+		parsedUrl, err = url.Parse(link)
+		if err != nil {
+			return link, err
+		}
 	}
 
-	//TODO: add https to the start if the url schem is empty
+	if parsedUrl.Scheme != "https" {
+		return link, &InvalidUrlSchema{schema: parsedUrl.Scheme}
+	}
 
 	// Check URL length
 	if len(link) > 1000 {
-		return &UrlTooLong{url: uint(len(link))}
+		return link, &UrlTooLong{url: uint(len(link))}
 	}
 
 	domain := parsedUrl.Hostname()
 	path := parsedUrl.Path
 
 	if err := validateDomain(domain); err != nil {
-		return err
+		return link, err
 	}
 
 	// Check for ASCII path characters
 	if path != "" {
 		if !utils.IsASCII(path) {
-			return &InvalidUrlPath{path: path}
+			return link, &InvalidUrlPath{path: path}
 		}
 	}
 
-	return nil
+	return link, nil
 }
 
 func validateDomain(domain string) error {
@@ -98,20 +106,17 @@ func validateDomain(domain string) error {
 	// Check for allowed domain characters
 	for _, c := range domain {
 		if !(utils.IsValidChar(c) || c == '-' || c == '.') {
-			fmt.Println(domain)
 			return &InvalidDomainFormat{}
 
 		}
 	}
 	if strings.Contains(domain, " ") {
-		fmt.Println("h3ell")
 		return &InvalidDomainFormat{}
 	}
 
 	// Check for consecutive dashes
 	re := regexp.MustCompile(`-{2,}`)
 	if re.MatchString(domain) {
-		fmt.Println("h2cell")
 		return &InvalidDomainFormat{}
 	}
 
@@ -138,7 +143,6 @@ func isValidDomainPart(part string) error {
 
 	// Check for leading or trailing dashes & empty parts
 	if strings.HasPrefix(part, "-") || strings.HasSuffix(part, "-") || part == "" {
-		fmt.Println("h2cellwq")
 		return &InvalidDomainFormat{}
 	}
 
