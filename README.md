@@ -37,7 +37,10 @@ also checks if the URL contains a valid
    cd shawty
    ```
 2. **Set ENV Variables**:
-   Get the database URL and Token: [Turso Docs](https://docs.turso.tech/sdk/go/quickstart)
+
+   Get the database URL and Token from: [Turso Docs](https://docs.turso.tech/sdk/go/quickstart).
+   Only needed if you're going to run the server in `prod` mode else the server
+   would create a temporary `sqlite3` database in the project directory
    ```bash
    cp .env .env.local
    ```
@@ -49,26 +52,33 @@ also checks if the URL contains a valid
    ```bash
    go run .
    ```
-5. **Access the web interface on port**: `1234`:
+5. **Access the web interface on port**: `1920`:
    ```bash
-   curl -i http://localhost:1234/
+   xdg-open http://localhost:1920
    ```
 
 ### Development
 
-Use the `Makefile` to run/build the web server.
+Use the `make` command to run/build the web server.
+
+> [!NOTE]
+> Make sure the `ENVIROMENT` variable in `.evn.local` is set to `dev` in order run the server in development mode.
 
 #### Requirements
+
+Tools you'll be needing for development:
 
 - [Watchexec](https://github.com/watchexec/watchexec) - A file watcher for restarting and running the web server when the source files are updated.
 - [Bun](https://bun.sh) - Bun package manager (or `npm`,`pmpm`) for installing and watching static content for tailwind classes.
 - [Sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) - Generating type-safe code from SQL.
+- [Rust](https://www.rust-lang.org/) - For live-reloading web pages whenever the source files changes.
 
-#### Commands
+#### Make Commands
 
 - `make server` to start the server in watch mode
 - `make tailwind` to watch for tailwind classes
 - `make tailmini` to minify the generated tailwind CSS file
+- `make sqlc` to generate type safe **SQL** Go-code.
 
 ## Contributing
 
