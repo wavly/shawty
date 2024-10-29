@@ -1,8 +1,22 @@
-const socketUrl = 'ws://localhost:{{ . }}/dev';
+const socketUrl = "ws://127.0.0.1:9090";
+const socket = new WebSocket(socketUrl);
 
-let socket = new WebSocket(socketUrl);
+socket.onopen = () => {
+  console.info("Connected to WebSocket server");
+};
 
-socket.addEventListener('close', () => {
+socket.onmessage = (event) => {
+  // Reload the page whenever receving a specific message
+  if (event.data == "file changed") {
+    console.log("reloading");
+    location.reload();
+  }
+};
+
+socket.onerror = (error) => {
+  console.error("WebSocket error:", error);
+  console.log("Trying to reconnect");
+
   const interAttemptTimeoutMilliseconds = 100;
   const maxDisconnectedTimeMilliseconds = 3000;
   const maxAttempts = Math.round(
@@ -10,19 +24,26 @@ socket.addEventListener('close', () => {
   );
 
   let attempts = 0;
-  const reloadIfCanConnect = () => {
+  function reloadIfCanConnect() {
     attempts++;
     if (attempts > maxAttempts) {
-      console.error('Could not reconnect to dev server.');
+      console.error('Could not reconnect to dev server');
       return;
     }
+
     socket = new WebSocket(socketUrl);
     socket.addEventListener('error', () => {
       setTimeout(reloadIfCanConnect, interAttemptTimeoutMilliseconds);
     });
+
     socket.addEventListener('open', () => {
       location.reload();
     });
   };
+
   reloadIfCanConnect();
+};
+
+socket.addEventListener('close', () => {
+  console.info("WebSocket connection closed!");
 });
