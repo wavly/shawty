@@ -1,9 +1,7 @@
 package validate
 
 import (
-	"fmt"
 	"net/url"
-	"regexp"
 	"strings"
 
 	"github.com/wavly/shawty/utils"
@@ -103,9 +101,6 @@ func validateDomain(domain string) error {
 		}
 	}
 
-	// Check for consecutive dashes
-	re := regexp.MustCompile(`-{2,}`)
-	if re.MatchString(domain) {
 	if strings.Contains(domain, " ") {
 		return &InvalidDomainFormat{}
 	}
