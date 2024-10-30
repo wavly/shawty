@@ -55,12 +55,18 @@ func (link *InvalidUrlPath) Error() string {
 }
 
 func ValidateUrl(link string) (string, error) {
+	// Check URL length
+	if len(link) > 1000 {
+		return link, &UrlTooLong{}
+	}
+
 	parsedUrl, err := url.Parse(link)
 	if err != nil {
 		return link, err
 	}
 
 	// Check if the scheme is empty, if so default to https
+	// TODO: Avoid parsing the URL twice
 	if parsedUrl.Scheme == "" {
 		link = "https://" + link
 		parsedUrl, err = url.Parse(link)
