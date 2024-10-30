@@ -21,7 +21,7 @@ func TestValidateURLs(t *testing.T) {
 		{"example.com", nil},
 		{"sub.example.com", nil},
 		{"example.com/path", nil},
-		{"test-domain.com", nil},
+		{"test-dash-domain.com", nil},
 		{"microsoft.com", nil},
 		{"https://user:pass@ple.com", nil},
 		{"github.com", nil},
@@ -40,9 +40,9 @@ func TestValidateURLs(t *testing.T) {
 
 		// Invalid Domain Format
 		{"https://example..com", &InvalidDomainFormat{}},
-		
-		// TODO: valid domains with dashes
-		// {"xn--bcher-kva.com", &InvalidDomainFormat{}}, // Punycode domain
+
+		{"xn--bcher-kva.com", &InvalidDomainFormat{}},
+		{"to-o--many---dashes.com", &InvalidDomainFormat{}},
 
 		{"https://example--com", &InvalidDomainName{}},
 		{"https://example-.com", &InvalidDomainFormat{}},
