@@ -86,6 +86,12 @@ func ValidateUrl(link string) (string, error) {
 }
 
 func validateDomain(domain string) error {
+	// Check for TLD
+	domainParts := strings.Split(domain, ".")
+	if len(domainParts) < 2 {
+		return &InvalidDomainName{}
+	}
+
 	// Check domain length
 	if len(domain) > 253 {
 		return &DomainTooLong{}
@@ -97,7 +103,6 @@ func validateDomain(domain string) error {
 	for _, c := range domain {
 		if !(utils.IsValidChar(c) || c == '-' || c == '.') {
 			return &InvalidDomainFormat{}
-
 		}
 	}
 
@@ -105,11 +110,6 @@ func validateDomain(domain string) error {
 		return &InvalidDomainFormat{}
 	}
 
-	// Check for TLD
-	domainParts := strings.Split(domain, ".")
-	if len(domainParts) < 2 {
-		return &InvalidDomainName{}
-	}
 
 	// Validate each domain part seperately
 	for _, part := range domainParts {
