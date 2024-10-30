@@ -99,17 +99,21 @@ func validateDomain(domain string) error {
 		return &DomainTooShort{}
 	}
 
-	// Check for allowed domain characters
-	for _, c := range domain {
-		if !(utils.IsValidChar(c) || c == '-' || c == '.') {
+	// Check for forbidden domain characters & consecutive dashes
+	lastDashIndex := 0
+	for i, c := range domain {
+		if !(utils.IsValidChar(c) || c == '-' || c == '.') || (c == '-' && lastDashIndex+1 == i) {
 			return &InvalidDomainFormat{}
+		}
+
+		if c == '-' {
+			lastDashIndex = i
 		}
 	}
 
 	if strings.Contains(domain, " ") {
 		return &InvalidDomainFormat{}
 	}
-
 
 	// Validate each domain part seperately
 	for _, part := range domainParts {
