@@ -12,46 +12,37 @@ import (
 type InvalidDomainName struct{}
 type InvalidDomainFormat struct{}
 type DomainTooLong struct{}
-type DomainTooShort struct {
-	domain string
-}
-
-type UrlTooLong struct {
-	url uint
-}
-type InvalidUrlSchema struct {
-	schema string
-}
-type InvalidUrlPath struct {
-	path string
-}
+type UrlTooLong struct{}
+type InvalidUrlPath struct{}
+type DomainTooShort struct{}
+type InvalidUrlSchema struct{}
 
 func (*InvalidDomainFormat) Error() string {
 	return "Only alphabetical characters, digits, and non consecutive hyphens are allowed in the domain name"
 }
 
-func (link *UrlTooLong) Error() string {
-	return fmt.Sprintf("URL is too long, max length is 1000 characters, but got %v", link.url)
+func (*UrlTooLong) Error() string {
+	return "URL is too long, max length is 1000 characters"
 }
 
-func (link *DomainTooShort) Error() string {
-	return fmt.Sprintf("Domain is too short, min length is 4 charecters, domain: %s", link.domain)
+func (*DomainTooShort) Error() string {
+	return "Domain is too short, min length is 4 charecters"
 }
 
 func (*InvalidDomainName) Error() string {
 	return "URL doesn't contain a valid TLD (Top-Level Domain)"
 }
 
-func (link *InvalidUrlSchema) Error() string {
-	return fmt.Sprintf("Invalid URL schema, only HTTPS schema is allowed, but got %s", link.schema)
+func (*InvalidUrlSchema) Error() string {
+	return "Invalid URL schema, only HTTPS schema is allowed"
 }
 
 func (*DomainTooLong) Error() string {
 	return "Domain Name is too long"
 }
 
-func (link *InvalidUrlPath) Error() string {
-	return fmt.Sprintf("URL path contains invalid characters: %s", link.path)
+func (*InvalidUrlPath) Error() string {
+	return "URL path contains invalid characters"
 }
 
 func ValidateUrl(link string) (string, error) {
@@ -76,12 +67,7 @@ func ValidateUrl(link string) (string, error) {
 	}
 
 	if parsedUrl.Scheme != "https" {
-		return link, &InvalidUrlSchema{schema: parsedUrl.Scheme}
-	}
-
-	// Check URL length
-	if len(link) > 1000 {
-		return link, &UrlTooLong{url: uint(len(link))}
+		return link, &InvalidUrlSchema{}
 	}
 
 	domain := parsedUrl.Hostname()
@@ -94,7 +80,7 @@ func ValidateUrl(link string) (string, error) {
 	// Check for ASCII path characters
 	if path != "" {
 		if !utils.IsASCII(path) {
-			return link, &InvalidUrlPath{path: path}
+			return link, &InvalidUrlPath{}
 		}
 	}
 
@@ -106,7 +92,7 @@ func validateDomain(domain string) error {
 	if len(domain) > 253 {
 		return &DomainTooLong{}
 	} else if len(domain) < 4 {
-		return &DomainTooShort{domain: domain}
+		return &DomainTooShort{}
 	}
 
 	// Check for allowed domain characters
@@ -116,13 +102,11 @@ func validateDomain(domain string) error {
 
 		}
 	}
-	if strings.Contains(domain, " ") {
-		return &InvalidDomainFormat{}
-	}
 
 	// Check for consecutive dashes
 	re := regexp.MustCompile(`-{2,}`)
 	if re.MatchString(domain) {
+	if strings.Contains(domain, " ") {
 		return &InvalidDomainFormat{}
 	}
 
