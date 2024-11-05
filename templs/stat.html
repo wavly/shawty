@@ -1,34 +1,40 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="title" content="Shawty - Tool for shortening long URLs">
-  <meta name="description" content="Shawty is a tool for shortening long URLs making it easy to share them">
-  <script src="https://unpkg.com/htmx.org@2.0.2"
-    integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
-    crossorigin="anonymous"></script>
-  <title>Shawty - URL Statistics</title>
-  <link rel="stylesheet" href="/static/dist.css">
-</head>
-<body class="bg-[#090909] text-[#ada9a9] min-h-screen flex flex-col items-center px-4 sm:px-6 lg:px-8 py-8 mt-8">
-  <h1 class="text-4xl md:text-5xl text-center text-white font-bold mb-8">Shawty</h1>
-  <div class="fw-full max-w-4xl flex flex-col gap-3 my-4 mx-auto">
-    <h2 class="text-2xl sm:text-3xl font-bold font-mono">Total number of clicks</h2>
-    <p class="text-base sm:text-lg">The number of clicks from the shortened URL that redirected the user to the destination page.</p>
-    <a class="underline bg-[#292929] font-mono p-2 w-fit rounded-md text-white break-all" href="/s/{{ .ShortUrl }}">shawty/s/{{ .ShortUrl }}</a>
-    <p class="text-base sm:text-lg font-bold flex flex-col sm:flex-row gap-2 sm:gap-3">
-      <span>Original URL:</span>
-      <a class="underline font-mono break-all" href="{{ .OriginalUrl }}">{{ .OriginalUrl }}</a>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="title" content="Shawty - Tool for shortening long URLs">
+    <meta name="description" content="Shawty is a tool for shortening long URLs making it easy to share them">
+    <title>Shawty - URL Statistics</title>
+    <link rel="stylesheet" href="/static/dist.css">
+  </head>
+  <body class="bg-[#090909] text-[#ada9a9] min-h-screen flex flex-col items-center px-4 sm:px-6 lg:px-8 py-8 mt-8">
+    <h1 class="text-4xl sm:text-5xl text-center text-white font-bold">
+      Shawty
+    </h1>
+    <p class="text-center text-lg mb-10">
+      Shawty is a free and
+      <a class="underline" target="_blank" href="https://github.com/wavly/shawty">open-source</a> tool for
+      shortening long URLs
     </p>
-    <h3 class="font-bold text-lg sm:text-xl font-mono">Count: {{ .Count }}</h3>
-    <h3 class="font-bold text-lg sm:text-xl font-mono">Last Accessed: {{ .LastAccessed }}</h3>
-  </div>
-  <div class="mt-8">
-    <a href="/"
-      class="px-4 py-2 font-semibold rounded-full transition duration-300 ease-in-out bg-gray-700 hover:bg-gray-600 text-white">
-      Go Home
-    </a>
-  </div>
-</body>
+
+    <div class="fw-full max-w-4xl flex flex-col gap-3 my-4 mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-bold font-mono">Total number of clicks</h2>
+      <p class="text-base sm:text-lg">The number of clicks from the shortened URL that redirected the user to the destination page.</p>
+      <a class="underline bg-[#292929] font-mono p-2 w-fit rounded-md text-white break-all" href="/s/{{ .ShortUrl }}">shawty/s/{{ .ShortUrl }}</a>
+      <p class="text-base sm:text-lg font-bold flex flex-col sm:flex-row gap-2 sm:gap-3">
+        <span>Original URL:</span>
+        <a class="underline font-mono break-all" href="{{ .OriginalUrl }}">{{ .OriginalUrl }}</a>
+      </p>
+      <h3 class="font-bold text-lg sm:text-xl font-mono">Count: {{ .Count }}</h3>
+      <h3 class="font-bold text-lg sm:text-xl font-mono">Last Accessed: {{ .LastAccessed }}</h3>
+    </div>
+
+    <div class="mt-8">
+      <a href="/"
+        class="px-4 py-2 font-semibold rounded-full transition duration-300 ease-in-out bg-gray-700 hover:bg-gray-600 text-white">
+        Go Home
+      </a>
+    </div>
+  </body>
 </html>
