@@ -37,8 +37,8 @@ func Unshort(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if domain matches
-	if parsedUrl.Host != "wavly.shawty.com" || parsedUrl.Scheme != "https" {
-		asserts.NoErr(errorTempl.Execute(w, "URL must use 'https://wavly.shawty.com'"), "Failed to execute template short-link-error.html")
+	if parsedUrl.Host != "shawty.wavly.tech" || parsedUrl.Scheme != "https" {
+		asserts.NoErr(errorTempl.Execute(w, "URL must use 'https://shawty.wavly.tech'"), "Failed to execute template short-link-error.html")
 		return
 	}
 
