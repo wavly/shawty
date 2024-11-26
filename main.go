@@ -58,6 +58,12 @@ func main() {
 	// Route for stats page
 	router.HandleFunc("GET /stat/{code}", handlers.Stats)
 
+	// Route for stats page
+	router.HandleFunc("GET /url-info", func(w http.ResponseWriter, r *http.Request) {
+		templ := utils.Templ("./templs/url-info.html")
+		asserts.NoErr(templ.Execute(w, nil), "Failed to execute template url-info.html")
+	})
+
 	// Route to handle redirection
 	router.HandleFunc("GET /s/{code}", handlers.Redirect)
 
