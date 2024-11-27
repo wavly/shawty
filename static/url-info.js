@@ -2,7 +2,7 @@ document.getElementById("code").addEventListener("submit", function(event) {
   event.preventDefault();
 
   /** @type string */
-  const input = document.getElementById("input").value;
+  const input = encodeURIComponent(document.getElementById("input").value);
   const errElm = document.getElementById("err");
 
   if (input.length < 2) {
