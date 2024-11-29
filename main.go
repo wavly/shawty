@@ -28,7 +28,7 @@ func main() {
 	// Create the URLs table in the database
 	db := utils.ConnectDB()
 	err := database.New(db).CreateUrlTable(context.Background())
-	asserts.NoErr(err, "Failed to creating the URLs table in the database")
+	asserts.NoErr(err, "Failed to create the URLs table in the database")
 	db.Close()
 
 	// Serving static files with caching
