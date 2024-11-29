@@ -2,7 +2,6 @@ package validate
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/wavly/shawty/asserts"
@@ -18,10 +17,8 @@ import (
 func EvictOldLinks(mins time.Duration) {
 	asserts.AssertEq(mins <= 0, "The time to evict the old links from the database has to be greater than 0")
 	logger := prettylogger.GetLogger(nil)
-
-	db := utils.ConnectDB()
-	defer db.Close()
-	queries := database.New(db)
+	sleepDuration := time.Minute * mins
+	queries := database.New(utils.ConnectDB())
 
 	for {
 		rows, err := queries.GetLastAccessedTime(context.Background())
@@ -30,30 +27,25 @@ func EvictOldLinks(mins time.Duration) {
 		// it will then crash the whole server!
 		if err != nil {
 			logger.Error("Failed to query last_accessed", "error", err)
-			time.Sleep(time.Minute * mins)
+			time.Sleep(sleepDuration)
 			continue
 		}
 
-		// TODO: change the last_accessed to defualt to the current time
 		for _, row := range rows {
-			if row.LastAccessed.Valid {
-				now := time.Now()
-				oneMonthAgo := now.AddDate(0, -1, 0)
+			now := time.Now()
+			oneMonthAgo := now.AddDate(0, -1, 0)
 
-				if row.LastAccessed.Time.Before(oneMonthAgo) {
-					logger.Info("Link is older than a month", "link", row.OriginalUrl, "time", row.LastAccessed.Time)
-					err = queries.DeleteLinkTime(context.Background(), sql.NullTime{
-						Valid: true,
-						Time:  row.LastAccessed.Time,
-					})
-					if err != nil {
-						logger.Error("Failed to delete the link from the database", "error", err)
-						continue
-					}
+			if row.LastAccessed.Before(oneMonthAgo) {
+				logger.Info("Link is older than a month", "link", row.OriginalUrl)
+				err = queries.DeleteLinkLastAccessed(context.Background(), row.LastAccessed)
+
+				if err != nil {
+					logger.Error("Failed to delete the link from the database", "error", err)
+					continue
 				}
 			}
 		}
 
-		time.Sleep(time.Minute * mins)
+		time.Sleep(sleepDuration)
 	}
 }
