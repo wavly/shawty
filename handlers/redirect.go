@@ -58,7 +58,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		// Update the accessed_count and last_accessed in one query
 		err = queries.UpdateAccessedAndLastCount(r.Context(), database.UpdateAccessedAndLastCountParams{
 			Code:         code,
-			LastAccessed: sql.NullTime{Time: time.Now().UTC(), Valid: true},
+			LastAccessed: time.Now().UTC(),
 		})
 		if err != nil {
 			Logger.Error("failed to update accessed_count and last_accessed", "error", err)
@@ -76,7 +76,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	// Update the accessed_count and last_accessed in one query
 	err = queries.UpdateAccessedAndLastCount(r.Context(), database.UpdateAccessedAndLastCountParams{
 		Code:         code,
-		LastAccessed: sql.NullTime{Time: time.Now().UTC(), Valid: true},
+		LastAccessed: time.Now().UTC(),
 	})
 	if err != nil {
 		Logger.Error("failed to update accessed_count and last_accessed", "error", err)
