@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS urls (
   code TEXT UNIQUE NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   accessed_count INTEGER NOT NULL DEFAULT 0,
-  last_accessed DATETIME
+  last_accessed DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Creating an Index to retrieve the urls(code) from the database more quickly than otherwise
