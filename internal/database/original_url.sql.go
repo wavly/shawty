@@ -7,7 +7,7 @@ package database
 
 import (
 	"context"
-	"database/sql"
+	"time"
 )
 
 const createShortLink = `-- name: CreateShortLink :one
@@ -37,13 +37,14 @@ func (q *Queries) CreateShortLink(ctx context.Context, arg CreateShortLinkParams
 	return i, err
 }
 
-const deleteLinkTime = `-- name: DeleteLinkTime :exec
+const deleteLinkLastAccessed = `-- name: DeleteLinkLastAccessed :exec
 DELETE FROM urls
-  WHERE last_accessed = ?
+  WHERE DATE(last_accessed) = ?
 `
 
-func (q *Queries) DeleteLinkTime(ctx context.Context, lastAccessed sql.NullTime) error {
-	_, err := q.db.ExecContext(ctx, deleteLinkTime, lastAccessed)
+// Delete the link with last_accessed field
+func (q *Queries) DeleteLinkLastAccessed(ctx context.Context, lastAccessed time.Time) error {
+	_, err := q.db.ExecContext(ctx, deleteLinkLastAccessed, lastAccessed)
 	return err
 }
 
@@ -62,7 +63,7 @@ SELECT last_accessed, original_url FROM urls
 `
 
 type GetLastAccessedTimeRow struct {
-	LastAccessed sql.NullTime
+	LastAccessed time.Time
 	OriginalUrl  string
 }
 
@@ -107,7 +108,7 @@ SELECT accessed_count, original_url, last_accessed FROM urls WHERE code = ?
 type GetShortCodeInfoRow struct {
 	AccessedCount int64
 	OriginalUrl   string
-	LastAccessed  sql.NullTime
+	LastAccessed  time.Time
 }
 
 func (q *Queries) GetShortCodeInfo(ctx context.Context, code string) (GetShortCodeInfoRow, error) {
@@ -122,7 +123,7 @@ UPDATE urls SET accessed_count = accessed_count + 1, last_accessed = ? WHERE cod
 `
 
 type UpdateAccessedAndLastCountParams struct {
-	LastAccessed sql.NullTime
+	LastAccessed time.Time
 	Code         string
 }
 
