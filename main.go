@@ -23,13 +23,19 @@ func main() {
 	// Get the env variables and other config options
 	config.Init()
 
-	go validate.EvictOldLinks(2)
-
 	// Create the URLs table in the database
 	db := utils.ConnectDB()
 	err := database.New(db).CreateUrlTable(context.Background())
 	asserts.NoErr(err, "Failed to create the URLs table in the database")
 	db.Close()
+
+	// Find and remove links that are older than a month every hour
+	go func() {
+		for {
+			validate.EvictOldLinks(db)
+			time.Sleep(60 * time.Minute)
+		}
+	}()
 
 	// Serving static files with caching
 	router.Handle("GET /static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
