@@ -22,5 +22,4 @@ SELECT last_accessed, original_url FROM urls;
 
 -- Delete the link with last_accessed field
 -- name: DeleteLinkLastAccessed :exec
-DELETE FROM urls
-  WHERE DATE(last_accessed) = ?;
+DELETE FROM urls WHERE last_accessed = ?;

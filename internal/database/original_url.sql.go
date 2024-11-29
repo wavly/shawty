@@ -38,8 +38,7 @@ func (q *Queries) CreateShortLink(ctx context.Context, arg CreateShortLinkParams
 }
 
 const deleteLinkLastAccessed = `-- name: DeleteLinkLastAccessed :exec
-DELETE FROM urls
-  WHERE DATE(last_accessed) = ?
+DELETE FROM urls WHERE last_accessed = ?
 `
 
 // Delete the link with last_accessed field
