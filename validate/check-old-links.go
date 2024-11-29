@@ -16,7 +16,7 @@ import (
 // The function runs periodically and blocks the thread forever, use a
 // goroutine to run the function in a separate goroutine.
 func EvictOldLinks(mins time.Duration) {
-	asserts.AssertEq(mins <= 0, "The time of evicting the old links from the database has to greater than 0")
+	asserts.AssertEq(mins <= 0, "The time to evict the old links from the database has to be greater than 0")
 	logger := prettylogger.GetLogger(nil)
 
 	db := utils.ConnectDB()
