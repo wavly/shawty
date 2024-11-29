@@ -5,7 +5,6 @@
 package database
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -15,5 +14,5 @@ type Url struct {
 	Code          string
 	CreatedAt     time.Time
 	AccessedCount int64
-	LastAccessed  sql.NullTime
+	LastAccessed  time.Time
 }
