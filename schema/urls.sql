@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS urls (
   last_accessed DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Creating an Index to retrieve the urls(code) from the database more quickly than otherwise
+-- Creating an Index to retrieve the urls(code) from the database more quickly
 CREATE INDEX IF NOT EXISTS idx_short_code ON urls(code);

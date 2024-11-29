@@ -20,6 +20,7 @@ SELECT code FROM urls WHERE code = ?;
 -- name: GetLastAccessedTime :many
 SELECT last_accessed, original_url FROM urls;
 
--- name: DeleteLinkTime :exec
+-- Delete the link with last_accessed field
+-- name: DeleteLinkLastAccessed :exec
 DELETE FROM urls
-  WHERE last_accessed = ?;
+  WHERE DATE(last_accessed) = ?;
