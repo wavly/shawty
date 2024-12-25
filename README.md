@@ -28,7 +28,6 @@ also checks if the URL contains a valid
 
 - Go (version 1.20 or higher) - [Download](https://go.dev/doc/install)
 - Turso Account - [Website](https://turso.tech)
-- Git - [Download](https://git-scm.com/downloads)
 
 ### Installation and Setup
 
