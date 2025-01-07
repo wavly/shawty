@@ -26,7 +26,7 @@ func Unshort(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !strings.Contains(inputUrl, "://") {
-		inputUrl = "https://"+inputUrl
+		inputUrl = "https://" + inputUrl
 	}
 
 	parsedUrl, err := url.Parse(inputUrl)
@@ -68,7 +68,7 @@ func Unshort(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if err == sql.ErrNoRows {
 				Logger.Warn("url doesn't exists in the database", "code", code, "user-agent", r.UserAgent(), "error", err)
-				asserts.NoErr(errorTempl.Execute(w, "There is no destination URL for this short URL: "+"wavly.shawty.com/s/"+code), "Failed to execute template short-link-error.html")
+				asserts.NoErr(errorTempl.Execute(w, "There is no destination URL for this short URL: "+"shawty.wavly.tech/s/"+code), "Failed to execute template short-link-error.html")
 				return
 			}
 
