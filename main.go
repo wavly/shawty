@@ -9,14 +9,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/config"
-	"github.com/wavly/shawty/env"
-	"github.com/wavly/shawty/handlers"
-	"github.com/wavly/shawty/internal/database"
-	prettylogger "github.com/wavly/shawty/pretty-logger"
-	"github.com/wavly/shawty/utils"
-	"github.com/wavly/shawty/validate"
+	"github.com/wavly/surf/asserts"
+	"github.com/wavly/surf/config"
+	"github.com/wavly/surf/env"
+	"github.com/wavly/surf/handlers"
+	"github.com/wavly/surf/internal/database"
+	prettylogger "github.com/wavly/surf/pretty-logger"
+	"github.com/wavly/surf/utils"
+	"github.com/wavly/surf/validate"
 )
 
 func main() {
@@ -84,7 +84,7 @@ func main() {
 	})
 
 	// API route for shortening the URL
-	router.HandleFunc("POST /shawty", handlers.Shawty)
+	router.HandleFunc("POST /surf", handlers.Surf)
 
 	// API route for unshortening the URL
 	router.HandleFunc("POST /unshort", handlers.Unshort)

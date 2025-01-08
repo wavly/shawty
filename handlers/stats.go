@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/mergestat/timediff"
-	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/internal/database"
-	"github.com/wavly/shawty/utils"
-	"github.com/wavly/shawty/validate"
+	"github.com/wavly/surf/asserts"
+	"github.com/wavly/surf/internal/database"
+	"github.com/wavly/surf/utils"
+	"github.com/wavly/surf/validate"
 )
 
 type AccessCount struct {

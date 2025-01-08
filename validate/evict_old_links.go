@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/wavly/shawty/internal/database"
-	prettylogger "github.com/wavly/shawty/pretty-logger"
+	"github.com/wavly/surf/internal/database"
+	prettylogger "github.com/wavly/surf/pretty-logger"
 )
 
 // Evict Old links form the database

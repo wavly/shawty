@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/wavly/shawty/utils"
+	"github.com/wavly/surf/utils"
 )
 
 type InvalidDomainName struct{}

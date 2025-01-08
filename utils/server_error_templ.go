@@ -3,7 +3,7 @@ package utils
 import (
 	"net/http"
 
-	"github.com/wavly/shawty/asserts"
+	"github.com/wavly/surf/asserts"
 )
 
 func ServerErrTempl(w http.ResponseWriter, msg string) {

@@ -7,17 +7,17 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/internal/database"
-	"github.com/wavly/shawty/utils"
-	"github.com/wavly/shawty/validate"
+	"github.com/wavly/surf/asserts"
+	"github.com/wavly/surf/internal/database"
+	"github.com/wavly/surf/utils"
+	"github.com/wavly/surf/validate"
 )
 
 type ShortLink struct {
 	ShortUrl string
 }
 
-func Shawty(w http.ResponseWriter, r *http.Request) {
+func Surf(w http.ResponseWriter, r *http.Request) {
 	inputUrl := r.FormValue("url")
 	Logger.Info("Shorten the URL", "url", inputUrl, "user-agent", r.UserAgent())
 

@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="title" content="Shawty - Tool for shortening long URLs" />
+    <meta name="title" content="Surf - Tool for shortening long URLs" />
     <meta
       name="description"
-      content="Shawty is a tool for shortening long URLs making it easy to share them"
+      content="Surf is a tool for shortening long URLs making it easy to share them"
     />
     <script
       src="https://unpkg.com/htmx.org@2.0.2"
       integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
       crossorigin="anonymous"
     ></script>
-    <title>Shawty</title>
+    <title>Surf</title>
     <link rel="stylesheet" href="/static/dist.css" />
     <style>
       a {
@@ -24,11 +24,11 @@
   <body class="bg-[#090909] text-[#ada9a9] min-h-screen flex flex-col items-center px-4 sm:px-6 lg:px-8">
     <main class="w-full max-w-4xl mx-auto mt-8">
       <h1 class="text-4xl sm:text-5xl text-center text-white font-bold">
-        Shawty
+        Surf
       </h1>
       <p class="text-center text-lg mb-10">
-        Shawty is a free and
-        <a class="underline" target="_blank" href="https://github.com/wavly/shawty">open-source</a> tool for
+        Surf is a free and
+        <a class="underline" target="_blank" href="https://github.com/wavly/surf">open-source</a> tool for
         shortening long URLs
       </p>
 
@@ -38,7 +38,7 @@
         </h2>
         <form
           class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-0 mb-6 relative"
-          hx-post="/shawty"
+          hx-post="/surf"
           hx-target="#return"
         >
         <div class="relative">
@@ -74,7 +74,7 @@
         Simple and fast URL shortener!
       </h2>
       <p class="text-lg mb-6">
-        Shawty allows you to shorten long links from various platforms like
+        Surf allows you to shorten long links from various platforms like
         <a class="underline" target="_blank" href="https://www.instagram.com">Instagram</a>,
         <a class="underline" target="_blank" href="https://facebook.com">Facebook</a>,
         <a class="underline" target="_blank" href="https://youtube.com">YouTube</a>,
@@ -96,7 +96,7 @@
         of hits from your URL with our click counter.
       </p>
       <footer class="border-t border-white w-full py-3">
-        <p class="text-center">&copy; shawty.wavly.tech - Tool for shortening long links</p>
+        <p class="text-center">&copy; surf.wavly.tech - Tool for shortening long links</p>
       </footer>
     </main>
   </body>
