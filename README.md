@@ -42,7 +42,7 @@ also checks if the URL contains a valid
    Only needed if you're going to run the server in `prod` mode else the server
    would create a temporary `sqlite3` database in the project directory
    ```bash
-   cp .env .env.local
+   cp .env.example .env
    ```
 3. **Install the dependencies**:
    ```bash

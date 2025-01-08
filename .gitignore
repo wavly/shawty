@@ -1,5 +1,6 @@
-.env.local
+.env
 node_modules
 bun.lockb
 *.db
 target
+.env.local
