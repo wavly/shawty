@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/wavly/shawty/asserts"
@@ -27,7 +30,6 @@ func main() {
 	db := utils.ConnectDB()
 	err := database.New(db).CreateUrlTable(context.Background())
 	asserts.NoErr(err, "Failed to create the URLs table in the database")
-	db.Close()
 
 	// Find and remove links that are older than a month every hour
 	go func() {
@@ -95,5 +97,25 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
 	}
-	asserts.NoErr(server.ListenAndServe(), "Failed to start the server")
+
+	// Graceful shutdown
+	go func() {
+		asserts.NoErr(server.ListenAndServe(), "Failed to start the server")
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	logger.Info("Shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		logger.Error("Server forced to shutdown", "error", err)
+	}
+
+	db.Close()
+	logger.Info("Server exiting")
 }
