@@ -147,11 +147,14 @@ func NewHandler(opts *slog.HandlerOptions) *Handler {
 	}
 }
 
-// TODO: save the `prod` logs in a file
 func GetLogger(opts *slog.HandlerOptions) *slog.Logger {
 	if env.MODE == "prod" {
-		return slog.New(slog.NewJSONHandler(os.Stdout, opts))
+		file, err := os.OpenFile("prod.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil {
+			fmt.Printf("Failed to open log file: %v\n", err)
+			return slog.New(slog.NewJSONHandler(os.Stdout, opts))
+		}
+		return slog.New(slog.NewJSONHandler(file, opts))
 	}
 	return slog.New(NewHandler(opts))
 }
-

@@ -54,7 +54,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		Logger.Info("Cache Miss, redirect code not found", "code", code, "user-agent", r.UserAgent())
 		http.Redirect(w, r, originalUrl, http.StatusSeeOther)
 
-		// Todo: update last-time/access count in cache
 		// Update the accessed_count and last_accessed in one query
 		err = queries.UpdateAccessedAndLastCount(r.Context(), database.UpdateAccessedAndLastCountParams{
 			Code:         code,
@@ -72,7 +71,6 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	Logger.Info("Cache hit, redirect code found", "code", code, "user-agent", r.UserAgent())
 	http.Redirect(w, r, originalUrl.(string), http.StatusSeeOther)
 
-	// Todo: update last-time/access count in cache
 	// Update the accessed_count and last_accessed in one query
 	err = queries.UpdateAccessedAndLastCount(r.Context(), database.UpdateAccessedAndLastCountParams{
 		Code:         code,
@@ -82,4 +80,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		Logger.Error("failed to update accessed_count and last_accessed", "error", err)
 		return
 	}
+
+	// Update the cache with the new last accessed time and access count
+	Cache.Set(code, originalUrl, cache.DefaultExpiration)
 }
