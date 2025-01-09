@@ -50,7 +50,7 @@ func ValidateUrl(link string) (string, error) {
 	}
 
 	// Check if the scheme is empty, if so default to https
-	if !strings.Contains(link, "://") {
+	if !strings.HasPrefix(link, "http://") && !strings.HasPrefix(link, "https://") {
 		link = "https://" + link
 	}
 
