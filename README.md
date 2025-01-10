@@ -62,7 +62,7 @@ also checks if the URL contains a valid
 Use the `make` command to run/build the web server.
 
 > [!NOTE]
-> Make sure the `ENVIROMENT` variable in `.evn.local` is set to `dev` in order run the server in development mode.
+> Make sure the `ENVIROMENT` variable in `.env.local` is set to `dev` in order run the server in development mode.
 
 #### Requirements
 
