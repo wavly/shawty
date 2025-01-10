@@ -3,7 +3,7 @@ package validate
 import (
 	"fmt"
 
-	"github.com/wavly/shawty/utils"
+	"github.com/wavly/surf/utils"
 )
 
 type TooLong struct {

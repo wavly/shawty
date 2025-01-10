@@ -1,4 +1,4 @@
-module github.com/wavly/shawty
+module github.com/wavly/surf
 
 go 1.23.1
 

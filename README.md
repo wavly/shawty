@@ -1,6 +1,6 @@
-# Shawty
+# Surf
 
-**Shawty** is a URL shortener built using [Golang](https://go.dev),
+**Surf** is a URL shortener built using [Golang](https://go.dev),
 [Turso](https://turso.tech) and [HTMX](https://htmx.org). It provides a simple
 web interface for shortening URLs, tracking their usage, and offering
 statistics about shortened URLs.
@@ -33,8 +33,8 @@ also checks if the URL contains a valid
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/wavly/shawty.git
-   cd shawty
+   git clone https://github.com/wavly/surf.git
+   cd surf
    ```
 2. **Set ENV Variables**:
 
@@ -86,4 +86,4 @@ We welcome any contributions to this project! For major changes, please open an 
 
 ## LICENSE
 
-- Shawty is [Licensed](LICENSE) under MIT
+- Surf is [Licensed](LICENSE) under MIT

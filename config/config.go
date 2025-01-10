@@ -4,9 +4,9 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/wavly/shawty/asserts"
-	. "github.com/wavly/shawty/env"
-	prettylogger "github.com/wavly/shawty/pretty-logger"
+	"github.com/wavly/surf/asserts"
+	. "github.com/wavly/surf/env"
+	prettylogger "github.com/wavly/surf/pretty-logger"
 )
 
 var logger = prettylogger.GetLogger(nil)
