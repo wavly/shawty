@@ -24,7 +24,7 @@ func (*UrlTooLong) Error() string {
 }
 
 func (*DomainTooShort) Error() string {
-	return "Domain is too short, min length is 4 charecters"
+	return "Domain is too short, min length is 4 characters"
 }
 
 func (*InvalidDomainName) Error() string {
