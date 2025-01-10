@@ -49,19 +49,13 @@ func ValidateUrl(link string) (string, error) {
 		return link, &UrlTooLong{}
 	}
 
+	if !strings.HasPrefix(link, "http") && !strings.HasPrefix(link, "https") {
+		link = "https://" + link
+	}
+
 	parsedUrl, err := url.Parse(link)
 	if err != nil {
 		return link, err
-	}
-
-	// Check if the scheme is empty, if so default to https
-	// TODO: Avoid parsing the URL twice
-	if parsedUrl.Scheme == "" {
-		link = "https://" + link
-		parsedUrl, err = url.Parse(link)
-		if err != nil {
-			return link, err
-		}
 	}
 
 	if parsedUrl.Scheme != "https" {
