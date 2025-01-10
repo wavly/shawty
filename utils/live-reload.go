@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/env"
+	"github.com/wavly/surf/asserts"
+	"github.com/wavly/surf/env"
 )
 
 // Injects a script into the [Template File] to live-reload the page if in `DEV` mode,

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	_ "github.com/tursodatabase/go-libsql"
-	"github.com/wavly/shawty/internal/database"
+	"github.com/wavly/surf/internal/database"
 )
 
 // TestEvictOldLinks validates the EvictOldLinks function.

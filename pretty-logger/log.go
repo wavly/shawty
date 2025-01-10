@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/wavly/shawty/env"
+	"github.com/wavly/surf/env"
 )
 
 const (

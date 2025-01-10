@@ -3,7 +3,7 @@ package asserts
 import (
 	"os"
 
-	prettylogger "github.com/wavly/shawty/pretty-logger"
+	prettylogger "github.com/wavly/surf/pretty-logger"
 )
 
 var logger = prettylogger.GetLogger(nil)

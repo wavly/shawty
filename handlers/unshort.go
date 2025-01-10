@@ -8,11 +8,11 @@ import (
 	"strings"
 
 	"github.com/patrickmn/go-cache"
-	"github.com/wavly/shawty/asserts"
-	. "github.com/wavly/shawty/cache"
-	"github.com/wavly/shawty/internal/database"
-	"github.com/wavly/shawty/utils"
-	"github.com/wavly/shawty/validate"
+	"github.com/wavly/surf/asserts"
+	. "github.com/wavly/surf/cache"
+	"github.com/wavly/surf/internal/database"
+	"github.com/wavly/surf/utils"
+	"github.com/wavly/surf/validate"
 )
 
 func Unshort(w http.ResponseWriter, r *http.Request) {
@@ -37,8 +37,8 @@ func Unshort(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if domain matches
-	if parsedUrl.Host != "shawty.wavly.tech" || parsedUrl.Scheme != "https" {
-		asserts.NoErr(errorTempl.Execute(w, "URL must use 'https://shawty.wavly.tech'"), "Failed to execute template short-link-error.html")
+	if parsedUrl.Host != "surf.wavly.tech" || parsedUrl.Scheme != "https" {
+		asserts.NoErr(errorTempl.Execute(w, "URL must use 'https://surf.wavly.tech'"), "Failed to execute template short-link-error.html")
 		return
 	}
 
@@ -68,7 +68,7 @@ func Unshort(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if err == sql.ErrNoRows {
 				Logger.Warn("url doesn't exists in the database", "code", code, "user-agent", r.UserAgent(), "error", err)
-				asserts.NoErr(errorTempl.Execute(w, "There is no destination URL for this short URL: "+"wavly.shawty.com/s/"+code), "Failed to execute template short-link-error.html")
+				asserts.NoErr(errorTempl.Execute(w, "There is no destination URL for this short URL: "+"wavly.surf.com/s/"+code), "Failed to execute template short-link-error.html")
 				return
 			}
 

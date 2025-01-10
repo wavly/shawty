@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/patrickmn/go-cache"
-	"github.com/wavly/shawty/asserts"
-	. "github.com/wavly/shawty/cache"
-	"github.com/wavly/shawty/internal/database"
-	prettylogger "github.com/wavly/shawty/pretty-logger"
-	"github.com/wavly/shawty/utils"
-	"github.com/wavly/shawty/validate"
+	"github.com/wavly/surf/asserts"
+	. "github.com/wavly/surf/cache"
+	"github.com/wavly/surf/internal/database"
+	prettylogger "github.com/wavly/surf/pretty-logger"
+	"github.com/wavly/surf/utils"
+	"github.com/wavly/surf/validate"
 )
 
 var Logger = prettylogger.GetLogger(nil)

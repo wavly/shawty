@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/wavly/shawty/asserts"
-	"github.com/wavly/shawty/env"
+	"github.com/wavly/surf/asserts"
+	"github.com/wavly/surf/env"
 
 	_ "github.com/tursodatabase/go-libsql"
 )
