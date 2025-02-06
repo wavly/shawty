@@ -1,12 +1,16 @@
 package prettylogger
 
+// NOTE: Can't import the "asserts" package because it creates a circular dependency
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
+	"path"
+	"runtime"
 	"strconv"
 	"sync"
 
@@ -14,8 +18,7 @@ import (
 )
 
 const (
-	reset      = "\033[0m"
-	timeFormat = "[15:04:05.000]"
+	reset = "\033[0m"
 
 	black        = 30
 	red          = 31
@@ -46,19 +49,19 @@ func colorize(colorCode int, v string) string {
 	return fmt.Sprintf("\033[%sm%s%s", strconv.Itoa(colorCode), v, reset)
 }
 
-func (h *Handler) Enabled(ctx context.Context, level slog.Level) bool {
-	return h.handler.Enabled(ctx, level)
+func (handler *Handler) Enabled(ctx context.Context, level slog.Level) bool {
+	return handler.handler.Enabled(ctx, level)
 }
 
-func (h *Handler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	return &Handler{handler: h.handler.WithAttrs(attrs), buf: h.buf, mutex: h.mutex}
+func (handler *Handler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return &Handler{handler: handler.handler.WithAttrs(attrs), buf: handler.buf, mutex: handler.mutex}
 }
 
-func (h *Handler) WithGroup(name string) slog.Handler {
-	return &Handler{handler: h.handler.WithGroup(name), buf: h.buf, mutex: h.mutex}
+func (handler *Handler) WithGroup(name string) slog.Handler {
+	return &Handler{handler: handler.handler.WithGroup(name), buf: handler.buf, mutex: handler.mutex}
 }
 
-func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
+func (handler *Handler) Handle(ctx context.Context, r slog.Record) error {
 
 	level := r.Level.String() + ":"
 
@@ -73,7 +76,7 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 		level = colorize(lightRed, level)
 	}
 
-	attrs, err := h.computeAttrs(ctx, r)
+	attrs, err := handler.computeAttrs(ctx, r)
 	if err != nil {
 		return err
 	}
@@ -83,8 +86,16 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 		return fmt.Errorf("error when marshaling attrs: %w", err)
 	}
 
+	// Skip 3 stack frames which is all the logging functions and get to the caller
+	_, file, lineNo, ok := runtime.Caller(3)
+	if !ok {
+		log.Fatalln("failed to retrieve the runtime information")
+		return nil
+	}
+	fileName := path.Base(file)
+
 	fmt.Println(
-		colorize(brightWhite, r.Time.Format(timeFormat)),
+		colorize(brightWhite, fmt.Sprintf("[%s:%d]", fileName, lineNo)),
 		level,
 		colorize(white, r.Message),
 		colorize(lightGray, string(bytes)),
@@ -93,22 +104,22 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 	return nil
 }
 
-func (h *Handler) computeAttrs(
+func (handler *Handler) computeAttrs(
 	ctx context.Context,
 	r slog.Record,
 ) (map[string]any, error) {
 
-	h.mutex.Lock()
+	handler.mutex.Lock()
 	defer func() {
-		h.buf.Reset()
-		h.mutex.Unlock()
+		handler.buf.Reset()
+		handler.mutex.Unlock()
 	}()
-	if err := h.handler.Handle(ctx, r); err != nil {
+	if err := handler.handler.Handle(ctx, r); err != nil {
 		return nil, fmt.Errorf("error when calling inner handler's Handle: %w", err)
 	}
 
 	var attrs map[string]any
-	err := json.Unmarshal(h.buf.Bytes(), &attrs)
+	err := json.Unmarshal(handler.buf.Bytes(), &attrs)
 	if err != nil {
 		return nil, fmt.Errorf("error when unmarshaling inner handler's Handle result: %w", err)
 	}
@@ -135,10 +146,10 @@ func NewHandler(opts *slog.HandlerOptions) *Handler {
 	if opts == nil {
 		opts = &slog.HandlerOptions{}
 	}
-	b := &bytes.Buffer{}
+	buf := &bytes.Buffer{}
 	return &Handler{
-		buf: b,
-		handler: slog.NewJSONHandler(b, &slog.HandlerOptions{
+		buf: buf,
+		handler: slog.NewJSONHandler(buf, &slog.HandlerOptions{
 			Level:       opts.Level,
 			AddSource:   opts.AddSource,
 			ReplaceAttr: suppressDefaults(opts.ReplaceAttr),
@@ -154,4 +165,3 @@ func GetLogger(opts *slog.HandlerOptions) *slog.Logger {
 	}
 	return slog.New(NewHandler(opts))
 }
-
