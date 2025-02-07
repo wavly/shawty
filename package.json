@@ -3,7 +3,4 @@
   "dependencies": {
     "tailwindcss": "^3.4.14"
   },
-  "devDependencies": {
-    "ws": "^8.18.0"
-  }
 }
