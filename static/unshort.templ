@@ -1,0 +1,43 @@
+package static
+
+templ UnShort() {
+  <h1 class="text-4xl sm:text-5xl text-center text-white font-bold">
+    <a class="no-underline" href="/">Surf</a>
+  </h1>
+
+  <p class="text-center text-lg mb-10">
+    Surf is a free and
+    <a class="underline" target="_blank" href="https://github.com/wavly/surf">open-source</a> tool for
+    shortening long URLs
+  </p>
+
+  <div class="w-full max-w-4xl flex flex-col mx-auto">
+    <h2 class="text-2xl sm:text-3xl font-bold font-mono">Unshorten URL</h2>
+    <p class="text-base sm:text-lg">Enter the short URL to check the destination page.</p>
+    <form class="py-6 px-4 sm:px-7 my-4 flex flex-col items-center justify-center rounded-md bg-[#1f1f1f] w-full" hx-post="/unshort"
+      hx-target="#return">
+      <div class="flex items-center">
+        <input
+          class="px-4 py-3 rounded-l-md bg-slate-700 text-slate-400 placeholder-slate-400 w-full h-full sm:w-96"
+          required name="url" type="text" placeholder="Enter the code here">
+        <button
+          class="px-4 py-3 rounded-lg text-lg font-bold bg-black sm:rounded-l-none text-slate-300 active:bg-blue-800 w-full sm:w-auto"
+          type="submit">Check</button>
+      </div>
+      <span id="return" class="block"></span>
+    </form>
+    <p class="font-mono">- URL unshortener shows the original URL that a short URL will redirect to.</p>
+    <a class="font-mono flex gap-1 mt-3 text-lg" href="/">
+      <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+        <path d="M17 13H8.414l4.293-4.293-1.414-1.414L4.586 14l6.707 6.707 1.414-1.414L8.414 15H19V4h-2v9z" />
+      </svg>
+      Go back Home
+    </a>
+  </div>
+
+  <script
+    src="https://unpkg.com/htmx.org@2.0.2"
+    integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
+    crossorigin="anonymous"
+  ></script>
+}

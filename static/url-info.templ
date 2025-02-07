@@ -1,0 +1,59 @@
+package static
+
+templ UrlInfo() {
+  <h1 class="text-4xl sm:text-5xl text-center text-white font-bold">
+    <a class="no-underline" href="/">Surf</a>
+  </h1>
+  <p class="text-center text-lg mb-10">
+    Surf is a free and
+    <a class="underline" target="_blank" href="https://github.com/wavly/surf">open-source</a> tool for
+    shortening long URLs
+  </p>
+
+  <div class="w-full max-w-4xl flex flex-col mx-auto">
+    <h2 class="text-2xl sm:text-3xl font-bold font-mono">Find URL Info</h2>
+    <p class="text-base sm:text-lg">Enter the short link to check the usage statistics about the link.</p>
+    <form id="code" class="py-6 px-4 sm:px-7 my-4 flex flex-col items-center justify-center rounded-md bg-[#1f1f1f] w-full">
+      <div class="flex items-center">
+        <input
+          id="input"
+          class="px-4 py-3 rounded-l-md bg-slate-700 text-slate-400 placeholder-slate-400 w-full h-full sm:w-96"
+          required name="url" type="text" placeholder="Enter the code here">
+        <button
+          class="px-4 py-2 rounded-lg text-lg font-bold bg-black sm:rounded-l-none text-slate-300 active:bg-blue-800 w-full sm:w-auto"
+          type="submit">Check</button>
+      </div>
+      <span id="err" class="block text-red-400 pt-3"></span>
+    </form>
+    <p class="font-mono">- Example: AbCdE</p>
+    <a class="font-mono w-fit flex gap-1 mt-3 text-lg" href="/">
+      <svg class="fill-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+        <path d="M17 13H8.414l4.293-4.293-1.414-1.414L4.586 14l6.707 6.707 1.414-1.414L8.414 15H19V4h-2v9z" />
+      </svg>
+      Go back Home
+    </a>
+  </div>
+
+  <script>
+    document.getElementById("code").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      /** @type string */
+      const input = encodeURIComponent(document.getElementById("input").value);
+      const errElm = document.getElementById("err");
+
+      if (input.length < 2) {
+        errElm.innerText = "2 characters is required for the code"
+      } else if (input.length > 8) {
+        errElm.innerText = "Only 8 characters are allowed"
+      } else {
+        window.location.replace(`/stat/${input}`)
+      }
+
+      setTimeout(function() {
+        errElm.innerText = ""
+      }, 2000);
+
+    });
+  </script>
+}

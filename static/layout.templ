@@ -1,0 +1,25 @@
+package static
+
+templ Layout(child templ.Component) {
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="title" content="Surf - Tool for shortening long URLs" />
+      <meta
+        name="description"
+        content="Surf is a tool for shortening long URLs making it easy to share them"
+      />
+      <title>Surf</title>
+      <link rel="stylesheet" href="/static/dist.css" />
+      <style>
+        a {
+          text-decoration: underline;
+        }
+      </style>
+    </head>
+    <body class="bg-[#090909] text-[#ada9a9] min-h-screen flex flex-col items-center px-4 sm:px-6 lg:px-8">
+      <main class="w-full max-w-4xl mx-auto mt-8">@child</main>
+    </body>
+  </html>
+}

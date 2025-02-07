@@ -1,0 +1,32 @@
+package static
+
+templ ServerError(msg string) {
+  <!doctype html>
+  <html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="title" content="Internal Server Error">
+    <meta name="description" content="Surf is a tool for shortening long URLs making it easy to share them">
+    <title>Surf - Internal Server Error</title>
+    <link rel="stylesheet" href="/static/dist.css">
+  </head>
+
+  <body class="bg-[#090909]">
+    <div class="px-2 text-center">
+      <div class="h-screen flex flex-col justify-center items-center">
+        <h1 class="text-8xl font-extrabold text-red-500">500</h1>
+        <p class="text-4xl font-medium text-white">Internal Server Error</p>
+        <p class="text-xl text-[#ada9a9] mt-4">We apologize for the inconvenience. Please try again later.</p>
+        <p class="text-xl text-[#ada9a9] mt-4">{msg}</p>
+        <a href="/"
+        class="px-6 py-3 font-semibold rounded-full transition duration-300 ease-in-out bg-gray-700 hover:bg-gray-600 text-white">
+        Go Home
+      </a>
+      </div>
+    </div>
+  </body>
+
+  </html>
+}

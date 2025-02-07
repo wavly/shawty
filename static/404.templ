@@ -1,0 +1,32 @@
+package static
+
+templ PageNotFound() {
+  <!doctype html>
+  <html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="title" content="Surf - Tool for shortening long URLs">
+    <meta name="description" content="Surf is a tool for shortening long URLs making it easy to share them">
+    <title>404 - Page not found</title>
+    <link rel="stylesheet" href="/static/dist.css">
+  </head>
+  <body class="bg-[#090909]">
+    <div class="from-gray-800 to-gray-900 text-white">
+      <div class="flex items-center justify-center min-h-screen px-2">
+        <div class="text-center">
+          <h1 class="text-9xl font-bold">404</h1>
+          <p class="text-2xl font-medium mt-4">Oops! Page not found</p>
+          <p class="mt-4 mb-8">The page you're looking for doesn't exist or has been moved.</p>
+          <a href="/"
+            class="px-6 py-3 font-semibold rounded-full transition duration-300 ease-in-out bg-gray-700 hover:bg-gray-600 text-white">
+            Go Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  </html>
+}
