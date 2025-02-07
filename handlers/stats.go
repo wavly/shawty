@@ -3,10 +3,12 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/mergestat/timediff"
 	"github.com/wavly/surf/asserts"
 	"github.com/wavly/surf/internal/database"
+	"github.com/wavly/surf/static"
 	"github.com/wavly/surf/utils"
 	"github.com/wavly/surf/validate"
 )
@@ -29,7 +31,6 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templ := utils.Templ("./templs/stat.html")
 	db := utils.ConnectDB()
 	defer db.Close()
 	queries := database.New(db)
@@ -39,25 +40,19 @@ func Stats(w http.ResponseWriter, r *http.Request) {
 		if err != sql.ErrNoRows {
 			Logger.Error("failed to query to get the short url info", "code", inputCode, "user-agent", r.UserAgent(), "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
-			utils.ServerErrTempl(w, "An error occur when querying the database")
+			err := static.ServerError("An error occur when querying the database").Render(r.Context(), w)
+			asserts.NoErr(err, "Failed to render server-internal-error page")
 			return
 		}
 
 		Logger.Warn("Stats not found", "code", inputCode, "user-agent", r.UserAgent())
 		w.WriteHeader(http.StatusNotFound)
-		asserts.NoErr(utils.Templ("./templs/404.html").Execute(w, nil), "Failed to execute 404 template in stats page")
+		err = static.PageNotFound().Render(r.Context(), w)
+		asserts.NoErr(err, "Failed to render 404-page template")
 		return
 	}
 
-	data := AccessCount{
-		Count:        shortLinkInfo.AccessedCount,
-		LastAccessed: timediff.TimeDiff(shortLinkInfo.LastAccessed),
-		OriginalUrl:  shortLinkInfo.OriginalUrl,
-
-		ShortLink: ShortLink{
-			ShortUrl: inputCode,
-		},
-	}
-
-	asserts.NoErr(templ.Execute(w, data), "Failed to execute template stat.html")
+	count := strconv.Itoa(int(shortLinkInfo.AccessedCount))
+	err = static.Layout(static.Stats(inputCode, shortLinkInfo.OriginalUrl, timediff.TimeDiff(shortLinkInfo.LastAccessed), count)).Render(r.Context(), w)
+	asserts.NoErr(err, "Failed to render stats page")
 }

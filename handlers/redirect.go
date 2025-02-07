@@ -10,6 +10,7 @@ import (
 	. "github.com/wavly/surf/cache"
 	"github.com/wavly/surf/internal/database"
 	prettylogger "github.com/wavly/surf/pretty-logger"
+	"github.com/wavly/surf/static"
 	"github.com/wavly/surf/utils"
 	"github.com/wavly/surf/validate"
 )
@@ -40,14 +41,16 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if err != sql.ErrNoRows {
 				w.WriteHeader(http.StatusInternalServerError)
-				utils.ServerErrTempl(w, "Sorry, an unexpected error occur when querying the database for the URL")
+				err := static.ServerError("Sorry, an unexpected error occur when querying the database for the URL").Render(r.Context(), w)
+				asserts.NoErr(err, "Failed to render server-internal-error page")
 				Logger.Error("failed to query the database for the original URL", "error", err)
 				return
 			}
 
 			Logger.Warn("Redirect code not found", "code", code, "user-agent", r.UserAgent())
 			w.WriteHeader(http.StatusNotFound)
-			asserts.NoErr(utils.Templ("./templs/404.html").Execute(w, nil), "Failed to execute 404 template in redirect route")
+			err = static.PageNotFound().Render(r.Context(), w)
+			asserts.NoErr(err, "Failed to render 404-page template")
 			return
 		}
 

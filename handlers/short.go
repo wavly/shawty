@@ -4,11 +4,12 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
-	"html/template"
 	"net/http"
 
 	"github.com/wavly/surf/asserts"
 	"github.com/wavly/surf/internal/database"
+	partialhtml "github.com/wavly/surf/partial-html"
+	"github.com/wavly/surf/static"
 	"github.com/wavly/surf/utils"
 	"github.com/wavly/surf/validate"
 )
@@ -25,8 +26,8 @@ func Short(w http.ResponseWriter, r *http.Request) {
 	parsedUrl, err := validate.ValidateUrl(inputUrl)
 	if err != nil {
 		Logger.Warn("failed to validate URL", "url", parsedUrl, "user-agent", r.UserAgent(), "error", err)
-		errorTempl := template.Must(template.ParseFiles("./partial-html/short-link-error.html"))
-		asserts.NoErr(errorTempl.Execute(w, err), "Failed to execute template short-link-error.html")
+		err = partialhtml.ShortLinkError(err.Error()).Render(r.Context(), w)
+		asserts.NoErr(err, "Failed to render partial-html short-link-error")
 		return
 	}
 
@@ -41,8 +42,6 @@ func Short(w http.ResponseWriter, r *http.Request) {
 	// Only get 8 characters long hash
 	hashUrl := hex.EncodeToString(checksum[:4])
 
-	templ := template.Must(template.ParseFiles("./partial-html/short-link.html"))
-
 	// Check if the url exists in the database
 	code, err := queries.GetCode(r.Context(), hashUrl)
 	if err != nil {
@@ -51,7 +50,8 @@ func Short(w http.ResponseWriter, r *http.Request) {
 		// And if true then log the error and return
 		if err != sql.ErrNoRows {
 			Logger.Error("failed to query the code for the URL", "error", err, "code", hashUrl, "input-url", parsedUrl, "user-agent", r.UserAgent())
-			utils.ServerErrTempl(w, "An error occur when querying the database")
+			err := static.ServerError("An error occur when querying the database").Render(r.Context(), w)
+			asserts.NoErr(err, "Failed to render server-internal-error page")
 			return
 		}
 
@@ -62,22 +62,17 @@ func Short(w http.ResponseWriter, r *http.Request) {
 		})
 		if err != nil {
 			Logger.Error("failed to query to create short link", "original_url", parsedUrl, "code", hashUrl, "error", err)
-			utils.ServerErrTempl(w, "An error occur when saving the URL to the database")
+			err := static.ServerError("An error occur when saving the URL to the database").Render(r.Context(), w)
+			asserts.NoErr(err, "Failed to render server-internal-error page")
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		data := ShortLink{
-			ShortUrl: hashUrl,
-		}
-		asserts.NoErr(templ.Execute(w, data), "Failed to execute template short-link.html")
+		asserts.NoErr(partialhtml.ShortLink(hashUrl).Render(r.Context(), w), "Failed to render partial-html short-link")
 		return
 	}
 
 	Logger.Info("URL exists in the database", "url", parsedUrl, "code", hashUrl, "user-agent", r.UserAgent())
 	w.WriteHeader(http.StatusCreated)
-	data := ShortLink{
-		ShortUrl: code,
-	}
-	asserts.NoErr(templ.Execute(w, data), "Failed to execute template short-link.html")
+	asserts.NoErr(partialhtml.ShortLink(code).Render(r.Context(), w), "Failed to redner partial-html short-link")
 }

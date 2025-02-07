@@ -6,12 +6,14 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/a-h/templ"
 	"github.com/wavly/surf/asserts"
 	"github.com/wavly/surf/config"
 	"github.com/wavly/surf/env"
 	"github.com/wavly/surf/handlers"
 	"github.com/wavly/surf/internal/database"
 	prettylogger "github.com/wavly/surf/pretty-logger"
+	"github.com/wavly/surf/static"
 	"github.com/wavly/surf/utils"
 	"github.com/wavly/surf/validate"
 )
@@ -47,7 +49,6 @@ func main() {
 
 		// Serve the static content
 		http.FileServer(http.Dir("./static")).ServeHTTP(w, r)
-		logger.Debug("Request for static content", "resource", r.URL.Path, "user-agent", r.UserAgent())
 	})))
 
 	// Route for index page
@@ -58,33 +59,31 @@ func main() {
 			// NOTE: HTMX doesn't swap the elements if the returned status code isn't successful, e.g 4xx, 5xx
 			// This is fine "here" because it isn't using the hx-trigger attribute to swap the elements
 			w.WriteHeader(http.StatusNotFound)
-			utils.Templ("./templs/404.html").Execute(w, nil)
+			err := static.PageNotFound().Render(r.Context(), w)
+			asserts.NoErr(err, "Failed to render 404-page template")
 			return
 		}
-		w.Write(utils.StaticFile("./static/index.html"))
+
+		err := static.Layout(static.Index()).Render(r.Context(), w)
+		asserts.NoErr(err, "Failed to render index-template")
 	})
 
-	// Route for stats page
+	// Stats page
 	router.HandleFunc("GET /stat/{code}", handlers.Stats)
 
-	// Route for stats page
-	router.HandleFunc("GET /url-info", func(w http.ResponseWriter, r *http.Request) {
-		templ := utils.Templ("./templs/url-info.html")
-		asserts.NoErr(templ.Execute(w, nil), "Failed to execute template url-info.html")
-	})
+	// URL-Info page
+	router.Handle("GET /url-info", templ.Handler(static.Layout(static.UrlInfo())))
 
-	// Route to handle redirection
+	// Handle redirection
 	router.HandleFunc("GET /s/{code}", handlers.Redirect)
 
-	// Route for unshortening the URL
-	router.HandleFunc("GET /unshort", func(w http.ResponseWriter, r *http.Request) {
-		w.Write(utils.StaticFile("./static/unshort.html"))
-	})
+	// Unshort Page (get the destination URL for the short link)
+	router.Handle("GET /unshort", templ.Handler(static.Layout(static.UnShort())))
 
-	// API route for shortening the URL
+	// API Route: shorten the URL
 	router.HandleFunc("POST /short", handlers.Short)
 
-	// API route for unshortening the URL
+	// API Route: unshorten the URL
 	router.HandleFunc("POST /unshort", handlers.Unshort)
 
 	fmt.Printf("Listening on: %s\n\n", env.PORT)
