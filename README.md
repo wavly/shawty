@@ -68,10 +68,9 @@ Use the `make` command to run/build the web server.
 
 Tools you'll be needing for development:
 
-- [Watchexec](https://github.com/watchexec/watchexec) - A file watcher for restarting and running the web server when the source files are updated.
 - [Sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) - Generating type-safe code from SQL.
 - [Bun](https://bun.sh) - Bun package manager (or `npm`,`pmpm`) for JavaScript dependencies.
-- [Node](https://nodejs.org/en) - For live-reloading web pages whenever the source files changes.
+- [Templ](https://templ.guide/) - The HTML templating language and live-reloading
 
 #### Make Commands
 
@@ -79,6 +78,7 @@ Tools you'll be needing for development:
 - `make tailwind` to watch for tailwind classes
 - `make tailmini` to minify the generated tailwind CSS file
 - `make sqlc` to generate type safe **SQL** Go-code.
+- `make build` to build the server
 
 ## Contributing
 
