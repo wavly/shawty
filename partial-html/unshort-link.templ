@@ -1,0 +1,8 @@
+package partialhtml
+
+templ UnShort(shortLink string) {
+  <div class="mt-4 flex gap-2 text-lg">
+    <p>Redirect Link:</p>
+    <a class="font-mono" href={templ.URL(shortLink)}>{shortLink}</a>
+  </div>
+}

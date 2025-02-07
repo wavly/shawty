@@ -1,0 +1,44 @@
+package partialhtml
+
+templ ShortLink(shortURL string) {
+	<div class="flex flex-col items-center gap-4 text-lg font-mono mb-2 mt-10 text-center">
+		<div class="flex items-center gap-2">
+			<a class="underline text-white" href={ templ.URL("/s/" + shortURL) }>short/s/{ shortURL }</a>
+			<button
+				onclick={ templ.JSFuncCall("copyToClipboard", templ.JSExpression("this"), "/s/"+shortURL) }
+				class="bg-zinc-700 hover:bg-zinc-600 text-white font-bold py-1 px-3 rounded transition duration-300"
+			>
+				Copy
+			</button>
+		</div>
+		<div class="flex gap-2">
+			<a
+				class="hover:underline p-2 rounded-md bg-zinc-700 transition duration-300 hover:bg-zinc-600"
+				href={ templ.URL("/stat/" + shortURL) }
+			>See the stats for your short URL here</a>
+		</div>
+	</div>
+	<script>
+  function copyToClipboard(target, text) {
+    const basename = window.location.origin;
+
+    navigator.clipboard
+      .writeText(basename + text)
+      .then(() => {
+        const originalText = target.textContent;
+        target.textContent = "Copied!";
+        target.classList.add("opacity-50");
+        target.classList.add("cursor-not-allowed");
+
+        setTimeout(() => {
+          target.textContent = originalText;
+          target.classList.remove("opacity-50");
+          target.classList.remove("cursor-not-allowed");
+        }, 500);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  }
+</script>
+}
