@@ -20,7 +20,7 @@ var TURSO_TOKEN string
 var TURSO_URL string
 
 func Init() {
-	err := godotenv.Load(".env.local")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalln("Failed to load local env file")
 	}
