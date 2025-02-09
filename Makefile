@@ -1,5 +1,5 @@
 # Include the local env file
-include .env.local
+include .env
 
 BUILD_DIR = ./build
 
