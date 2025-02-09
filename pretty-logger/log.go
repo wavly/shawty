@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/wavly/surf/env"
+	"github.com/wavly/surf/config"
 )
 
 const (
@@ -160,7 +160,7 @@ func NewHandler(opts *slog.HandlerOptions) *Handler {
 
 // TODO: save the `prod` logs in a file
 func GetLogger(opts *slog.HandlerOptions) *slog.Logger {
-	if env.MODE == "prod" {
+	if config.MODE == "prod" {
 		return slog.New(slog.NewJSONHandler(os.Stdout, opts))
 	}
 	return slog.New(NewHandler(opts))

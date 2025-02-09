@@ -4,3 +4,4 @@ bun.lockb
 *.db
 target
 build
+*_templ.txt

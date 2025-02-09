@@ -9,7 +9,6 @@ import (
 	"github.com/a-h/templ"
 	"github.com/wavly/surf/asserts"
 	"github.com/wavly/surf/config"
-	"github.com/wavly/surf/env"
 	"github.com/wavly/surf/handlers"
 	"github.com/wavly/surf/internal/database"
 	prettylogger "github.com/wavly/surf/pretty-logger"
@@ -86,9 +85,9 @@ func main() {
 	// API Route: unshorten the URL
 	router.HandleFunc("POST /unshort", handlers.Unshort)
 
-	fmt.Printf("Listening on: %s\n\n", env.PORT)
+	fmt.Printf("Listening on: %s\n\n", config.PORT)
 	server := &http.Server{
-		Addr:         ":" + env.PORT,
+		Addr:         ":" + config.PORT,
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

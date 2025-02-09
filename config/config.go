@@ -1,36 +1,54 @@
 package config
 
 import (
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/wavly/surf/asserts"
-	. "github.com/wavly/surf/env"
-	prettylogger "github.com/wavly/surf/pretty-logger"
 )
 
-var logger = prettylogger.GetLogger(nil)
+// Working environment
+var MODE string
+
+// Server PORT number
+var PORT string
+
+// Access Token for Turso Database
+var TURSO_TOKEN string
+
+// Remote URL for Turso Database
+var TURSO_URL string
 
 func Init() {
 	err := godotenv.Load(".env.local")
-	asserts.NoErr(err, "Failed reading .env.local")
+	if err != nil {
+		log.Fatalln("Failed to load local env file")
+	}
 
 	port := os.Getenv("PORT")
-	asserts.AssertEq(port == "", "Missing PORT number in .env.local")
+	if port == "" {
+		log.Fatalln("Missing PORT number in .env.local")
+	}
 	PORT = port
 
 	environment := os.Getenv("ENVIRONMENT")
-	asserts.AssertEq(environment == "", "Missing ENVIRONMENT in .env.local")
+	if environment == "" {
+		log.Fatalln("Missing ENVIRONMENT number in .env.local")
+	}
 	MODE = environment
 
 	// Only get [TURSO_TOKEN] and [TURSO_URL] in Prodution
 	if MODE == "prod" {
 		tursoToken := os.Getenv("TURSO_AUTH_TOKEN")
-		asserts.AssertEq(tursoToken == "", "Missing TURSO_AUTH_TOKEN in .evn.local")
+		if tursoToken == "" {
+			log.Fatalln("Missing TURSO_AUTH_TOKEN in .evn.local")
+		}
 		TURSO_TOKEN = tursoToken
 
 		tursoURL := os.Getenv("TURSO_DATABASE_URL")
-		asserts.AssertEq(tursoURL == "", "Missing TURSO_URL in .evn.local")
+		if tursoURL == "" {
+			log.Fatalln("Missing TURSO_URL in .evn.local")
+		}
 		TURSO_URL = tursoURL
 		return
 	}
