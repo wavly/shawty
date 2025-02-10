@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -22,18 +21,18 @@ var TURSO_URL string
 func Init() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalln("Failed to load local env file")
+		panic("Failed to load local env file: " + err.Error())
 	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatalln("Missing PORT number in .env.local")
+		panic("Missing PORT number in .env.local")
 	}
 	PORT = port
 
 	environment := os.Getenv("ENVIRONMENT")
 	if environment == "" {
-		log.Fatalln("Missing ENVIRONMENT number in .env.local")
+		panic("Missing ENVIRONMENT number in .env")
 	}
 	MODE = environment
 
@@ -41,14 +40,15 @@ func Init() {
 	if MODE == "prod" {
 		tursoToken := os.Getenv("TURSO_AUTH_TOKEN")
 		if tursoToken == "" {
-			log.Fatalln("Missing TURSO_AUTH_TOKEN in .evn.local")
+			panic("Missing TURSO_AUTH_TOKEN in .evn")
 		}
 		TURSO_TOKEN = tursoToken
 
 		tursoURL := os.Getenv("TURSO_DATABASE_URL")
 		if tursoURL == "" {
-			log.Fatalln("Missing TURSO_URL in .evn.local")
+			panic("Missing TURSO_URL in .evn")
 		}
+
 		TURSO_URL = tursoURL
 		return
 	}
