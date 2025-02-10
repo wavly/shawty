@@ -1,8 +1,6 @@
 # Include the local env file
 include .env
 
-BUILD_DIR = ./build
-
 tailwind:
 	@bunx tailwindcss -i static/init.css -o static/dist.css --watch
 
@@ -13,14 +11,11 @@ tailminify:
 server:
 	@templ generate --watch --proxy="http://localhost:$(PORT)" --cmd="make run"
 
-build | $(BUILD_DIR):
-	clear && go build -o ./build/surf
-
-$(BUILD_DIR):
-	mkdir -p $@
+build:
+	@go build
 
 run:
-	clear && go build -o ./build/surf && ./build/surf
+	clear && go build && ./surf
 
 sqlc:
 	@sqlc generate

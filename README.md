@@ -50,7 +50,7 @@ also checks if the URL contains a valid
    ```
 4. **Run the server**:
    ```bash
-   go run .
+   make build
    ```
 5. **Access the web interface on port**: `1920`:
    ```bash
