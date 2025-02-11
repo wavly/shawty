@@ -48,9 +48,9 @@ also checks if the URL contains a valid
    ```bash
    go mod tidy
    ```
-4. **Run the server**:
+4. **Build & Run the server**:
    ```bash
-   make build
+   make build && ./surf
    ```
 5. **Access the web interface on port**: `1920`:
    ```bash
